@@ -38,7 +38,7 @@ class SignInVM @ViewModelInject constructor(
         return formErrors.isEmpty()
     }
     
-    val newUser = UserModel(email = bindSignIn.emailSignIn!!, name = bindSignIn.passwordSignIn!!)
+    val newUser = UserModel(bindSignIn.emailSignIn!!,bindSignIn.passwordSignIn!!)
     
     enum class FormErrors {
         INVALID_EMAIL,

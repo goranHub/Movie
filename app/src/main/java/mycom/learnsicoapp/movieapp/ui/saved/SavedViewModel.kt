@@ -3,11 +3,14 @@ package mycom.learnsicoapp.movieapp.ui.saved
 import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import mycom.learnsicoapp.movieapp.data.database.UserWithRatings
+import kotlinx.coroutines.launch
+import mycom.learnsicoapp.movieapp.data.database.ItemIdWithRatingForCurrentUser
+import mycom.learnsicoapp.movieapp.data.remote.firebase.FireStoreClass
 import mycom.learnsicoapp.movieapp.data.remote.response.movie.Movie
 import mycom.learnsicoapp.movieapp.domain.Repository
 
@@ -22,20 +25,25 @@ class SavedViewModel @ViewModelInject constructor(
     val adapter = SavedAdapter()
     var allElement = mutableListOf<Movie>()
 
-    suspend fun getRatingsOfUser(curenntUSer :String): List<UserWithRatings> {
-        return repository.getRatingsOfUser(curenntUSer)
+    init {
+        viewModelScope.launch {
+            val currentUserID = FireStoreClass().currentUserID()
+            val listOfRatings = getMoviesWithRatingFromDb(currentUserID)
+            apiCallForMoviesImage(listOfRatings)
+        }
     }
-    
-    fun getByMovieID(list: List<UserWithRatings>) {
 
-        list.map {
+    private suspend fun getMoviesWithRatingFromDb(currentUser: String): List<ItemIdWithRatingForCurrentUser> {
+        return repository.getRatingsOfUser(currentUser)
+    }
 
-            val listOfRatingsForCurrentUserFromDB = it.rating
+    private fun apiCallForMoviesImage(itemIdWithRatingForCurrentUser: List<ItemIdWithRatingForCurrentUser>) {
 
-            for (element in listOfRatingsForCurrentUserFromDB) {
-                val singleMovie =
-                    repository
-                        .getMovieByID(element.itemId.toLong())
+        itemIdWithRatingForCurrentUser.map {
+
+            for (element in it.rating) {
+
+                val singleMovie = repository.getMovieByID(element.itemId.toLong())
 
                 singleMovie
                     .subscribeOn(Schedulers.io())
@@ -47,7 +55,7 @@ class SavedViewModel @ViewModelInject constructor(
 
                             override fun onNext(response: Movie) {
                                 allElement.add(response)
-                                adapter.addMovieWithRating(allElement, listOfRatingsForCurrentUserFromDB)
+                                adapter.addMovieWithRating(allElement, it.rating)
                             }
 
                             override fun onError(e: Throwable) {
@@ -61,7 +69,6 @@ class SavedViewModel @ViewModelInject constructor(
             }
 
         }
-
     }
 }
 

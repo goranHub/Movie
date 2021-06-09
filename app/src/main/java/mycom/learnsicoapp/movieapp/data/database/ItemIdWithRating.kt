@@ -14,7 +14,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Entity
 @Parcelize
-class Rating (
+class ItemIdWithRating (
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "itemId")
     var itemId: String,

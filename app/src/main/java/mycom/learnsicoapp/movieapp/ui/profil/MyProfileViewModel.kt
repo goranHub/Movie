@@ -37,10 +37,10 @@ class MyProfileViewModel @ViewModelInject constructor(
     var statusProfileUpdateSuccess = MutableLiveData<Boolean?>()
     var userRemote = MutableLiveData<UserModel?>()
     var userFromDB = MutableLiveData<User?>()
-    private var profileImageURL: String = ""
+
 
     interface CallbackUpdateCollection {
-        fun updateCollection(profileImageURL : String)
+        fun update(profileImageURL : String)
     }
     // called in FireStoreClass updateUserProfileData
     fun profileUpdateSuccess() {
@@ -95,42 +95,7 @@ class MyProfileViewModel @ViewModelInject constructor(
             )
     }
 
-    fun uploadImageToFireStorage(selectedImageUri: Uri?, callbackUpdateCollection : CallbackUpdateCollection) {
-        if (selectedImageUri != null) {
-
-            //get the storage reference
-            val storageReference =
-                FirebaseStorage
-                    .getInstance()
-                    .reference
-                    .child("USER_IMAGE" + System.currentTimeMillis() + "."
-                        + fileExtension(selectedImageUri))
-
-            //put image to fire storage
-            storageReference
-                .putFile(selectedImageUri)
-                .addOnSuccessListener { snapshot ->
-                    // Get the downloadable url from the snapshot
-                    snapshot
-                        .metadata!!
-                        .reference!!
-                        .downloadUrl
-                            // take the url and upadate collection
-                        .addOnSuccessListener { uri ->
-                            profileImageURL = uri.toString()
-                            /*
-                            updateCollection are in fragment
-                             */
-                            callbackUpdateCollection.updateCollection(profileImageURL)
-
-                        }
-                }
-                .addOnFailureListener { exception ->
-                }
-        }
-    }
-
-    private fun fileExtension(uri: Uri?): String? {
+    fun fileExtension(uri: Uri?): String? {
         val cr: ContentResolver = appContext.contentResolver
         return MimeTypeMap.getSingleton()
             .getExtensionFromMimeType(cr.getType(uri!!))

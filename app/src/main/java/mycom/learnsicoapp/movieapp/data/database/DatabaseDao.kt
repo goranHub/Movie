@@ -7,7 +7,7 @@ import io.reactivex.Observable
 interface DatabaseDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertSmiley(rating: Rating)
+    suspend fun insertSmiley(rating: ItemIdWithRating)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUser(user: User)
@@ -15,15 +15,15 @@ interface DatabaseDao {
     @Query("SELECT * FROM User")
     fun getAuthUserDB(): Observable<List<User>>
 
-    @Query("SELECT * FROM Rating WHERE itemId =:itemId")
-    fun getSmileyByMovieId(itemId: Int): Observable<Rating>
+    @Query("SELECT * FROM ItemIdWithRating WHERE itemId =:itemId")
+    fun getSmileyByMovieId(itemId: Int): Observable<ItemIdWithRating>
 
-    @Query("DELETE FROM Rating  WHERE itemId =:itemId")
+    @Query("DELETE FROM ItemIdWithRating  WHERE itemId =:itemId")
     suspend fun deleteSmileyByMovieId(itemId: Int)
 
     @Transaction
     @Query("SELECT * FROM User WHERE id = :id")
-    suspend fun getRatingsOfUser(id: String): List<UserWithRatings>
+    suspend fun getRatingsOfUser(id: String): List<ItemIdWithRatingForCurrentUser>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertStudentSubjectCrossRef(crossRef: UserRatingsCrossRef)

@@ -14,38 +14,18 @@
             type="mycom.learnsicoapp.movieapp.ui.popular.PopularMovieFragment" />
     </data>
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/materialCardView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="1dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginLeft="1dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="1dp"
-        android:layout_marginRight="1dp"
-        android:layout_marginBottom="1dp"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:strokeColor="@color/colorPrimary"
-        app:strokeWidth="1dp">
-
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/item_crew_color">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/imageViewItem"
                 android:layout_width="107dp"
                 android:layout_height="147dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:onClick="@{() -> popularMovieFragment.openItem(data.movie.id)}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="1:1"
@@ -64,7 +44,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:text="@{data.movie.originalTitle}"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 app:layout_constraintBottom_toTopOf="@+id/buttonExpoloreTheCrew"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.529"
@@ -80,12 +60,11 @@
                 android:layout_marginBottom="28dp"
                 android:onClick="@{() -> popularMovieFragment.openCrew(data.movie.id)}"
                 android:text="@string/crew"
+                android:background="@drawable/button"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.54"
                 app:layout_constraintStart_toEndOf="@+id/imageViewItem"
                 tools:text="@string/crew" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
-
 </layout>

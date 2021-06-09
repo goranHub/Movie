@@ -1,20 +1,26 @@
 package mycom.learnsicoapp.movieapp.ui.login.signIn
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.AndroidEntryPoint
+import mycom.learnsicoapp.movieapp.EntryActivity
 import mycom.learnsicoapp.movieapp.R
 import mycom.learnsicoapp.movieapp.data.remote.firebase.FireStoreClass
 import mycom.learnsicoapp.movieapp.data.remote.firebase.model.UserFirebase
 import mycom.learnsicoapp.movieapp.databinding.FragmentSignInBinding
 import mycom.learnsicoapp.movieapp.di.Navigator
 import mycom.learnsicoapp.movieapp.ui.BaseFragment
+import mycom.learnsicoapp.movieapp.utils.USERS
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class SignInFragment : BaseFragment() {
 
     lateinit var binding: FragmentSignInBinding
@@ -29,7 +35,7 @@ class SignInFragment : BaseFragment() {
 
         binding = FragmentSignInBinding.inflate(inflater)
 
-        binding.btnSignIn.setOnClickListener {signInRegisteredUser()}
+        binding.btnSignIn.setOnClickListener { signInRegisteredUser() }
 
         return binding.root
     }
@@ -45,7 +51,8 @@ class SignInFragment : BaseFragment() {
                 .addOnCompleteListener { task ->
                     hideProgressDialog()
                     if (task.isSuccessful) {
-                        FireStoreClass().signInUser(this@SignInFragment)
+                        signInUser(this@SignInFragment)
+                        (activity as EntryActivity).drawerLayout.open()
                     } else {
                         Toast.makeText(
                             requireContext(),
@@ -56,6 +63,24 @@ class SignInFragment : BaseFragment() {
                 }
         }
     }
+
+
+    fun signInUser(fragment: SignInFragment) {
+        FireStoreClass().fireBase.collection(USERS)
+            .document(FireStoreClass().currentUserID())
+            .get()
+            .addOnSuccessListener { document ->
+                Log.e(
+                    fragment.javaClass.simpleName, document.toString()
+                )
+                val loggedInUser = document.toObject(UserFirebase::class.java)!!
+                signInSuccess(loggedInUser)
+            }
+            .addOnFailureListener { e ->
+                Log.e(fragment.javaClass.simpleName, "Error while getting loggedIn user details", e)
+            }
+    }
+
 
     fun signInSuccess(user: UserFirebase) {
         hideProgressDialog()

@@ -28,11 +28,7 @@ class SavedFragment : BaseFragment() {
         binding = FragmentSavedListBinding.inflate(inflater)
         binding.listMovieSaved.layoutManager = GridLayoutManager(context, 2)
 
-        lifecycleScope.launch{
-            val currentUserID = FireStoreClass().currentUserID()
-            val listOfRatings = viewModel.getRatingsOfUser(currentUserID)
-            viewModel.getByMovieID(listOfRatings)
-        }
+
 
         binding.listMovieSaved.adapter = viewModel.adapter
         return binding.root

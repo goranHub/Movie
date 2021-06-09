@@ -155,7 +155,7 @@ class SearchFragment @Inject constructor(
 
     fun openDetails(movieId: Long, mediaTyp: String) {
         val bundlePostIdAndMediaTyp = bundleOf(ITEM_ID to movieId, MEDIATYP to mediaTyp)
-        navigator.navigateWithBundle(R.id.navDirectioMoviesDetailsFragment, bundlePostIdAndMediaTyp)
+        navigator.navigateWithBundle(R.id.navDirectionMoviesDetailsFragment, bundlePostIdAndMediaTyp)
     }
 
 

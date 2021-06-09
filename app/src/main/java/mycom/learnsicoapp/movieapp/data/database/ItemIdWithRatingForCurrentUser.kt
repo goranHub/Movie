@@ -11,7 +11,7 @@ import androidx.room.Relation
  */
 
 
-data class UserWithRatings(
+data class ItemIdWithRatingForCurrentUser(
 
     @Embedded val user: User,
     @Relation(
@@ -19,5 +19,5 @@ data class UserWithRatings(
         entityColumn = "itemId",
         associateBy = Junction(UserRatingsCrossRef::class)
     )
-    val rating: List<Rating>
+    val rating: List<ItemIdWithRating>
 )

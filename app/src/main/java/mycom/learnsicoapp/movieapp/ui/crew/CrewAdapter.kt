@@ -6,7 +6,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import mycom.learnsicoapp.movieapp.BR
 import mycom.learnsicoapp.movieapp.R
-import mycom.learnsicoapp.movieapp.databinding.ItemCreditsBinding
+import mycom.learnsicoapp.movieapp.databinding.ItemCrewBinding
 
 /**
  * @author ll4
@@ -17,9 +17,9 @@ class CrewAdapter: RecyclerView.Adapter<CrewAdapter.CrewViewHolder>(){
     var list = mutableListOf<CrewObservable>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrewViewHolder {
-       val binding : ItemCreditsBinding = DataBindingUtil.inflate(
+       val binding : ItemCrewBinding = DataBindingUtil.inflate(
            LayoutInflater.from(parent.context),
-           R.layout.item_credits,
+           R.layout.item_crew,
            parent,
            false
        )
@@ -31,7 +31,7 @@ class CrewAdapter: RecyclerView.Adapter<CrewAdapter.CrewViewHolder>(){
         holder.bind(data)
     }
 
-    class CrewViewHolder(val binding: ItemCreditsBinding) :
+    class CrewViewHolder(val binding: ItemCrewBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(obj: Any?) {
             binding.setVariable(BR.data, obj)

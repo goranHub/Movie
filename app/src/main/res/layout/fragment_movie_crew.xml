@@ -28,7 +28,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:setAdapter="@{data.adapter}"
             tools:itemCount="20"
-            tools:listitem="@layout/item_credits" />
+            tools:listitem="@layout/item_crew" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

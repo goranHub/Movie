@@ -60,11 +60,11 @@ class Repository(
         databaseDataSource.insertSmiley(itemId, rating)
     }
 
-    suspend fun getRatingsOfUser(curenntUSer : String):  List<UserWithRatings>  {
-        return databaseDataSource.getRatingsOfUser(curenntUSer)
+    suspend fun getRatingsOfUser(currentUser : String):  List<ItemIdWithRatingForCurrentUser>  {
+        return databaseDataSource.getRatingsOfUser(currentUser)
     }
 
-    fun getSmileyByMovieId(itemId: Int): Observable<Rating> {
+    fun getSmileyByMovieId(itemId: Int): Observable<ItemIdWithRating> {
         return databaseDataSource.getSmileyByMovieId(itemId)
     }
 

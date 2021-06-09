@@ -9,13 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import mycom.learnsicoapp.movieapp.R
-import mycom.learnsicoapp.movieapp.data.database.Rating
+import mycom.learnsicoapp.movieapp.data.database.ItemIdWithRating
 import mycom.learnsicoapp.movieapp.data.remote.response.movie.Movie
 import mycom.learnsicoapp.movieapp.utils.URL_IMAGE
 
 class SavedAdapter : RecyclerView.Adapter<SavedAdapter.ViewHolderSaved>() {
 
-    var listSaved = listOf<Rating>()
+    var listSaved = listOf<ItemIdWithRating>()
 
     var movieList = listOf<Movie>()
 
@@ -40,7 +40,7 @@ class SavedAdapter : RecyclerView.Adapter<SavedAdapter.ViewHolderSaved>() {
             .into(holder.idView)
     }
 
-    fun addMovieWithRating(allElement: List<Movie>, list: List<Rating>) {
+    fun addMovieWithRating(allElement: List<Movie>, list: List<ItemIdWithRating>) {
         movieList = allElement
         listSaved = list
         notifyDataSetChanged()

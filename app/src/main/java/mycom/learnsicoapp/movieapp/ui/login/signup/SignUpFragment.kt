@@ -1,6 +1,7 @@
 package mycom.learnsicoapp.movieapp.ui.login.signup
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,14 +12,17 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.SetOptions
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.dialog_progress.*
+import mycom.learnsicoapp.movieapp.EntryActivity
 import mycom.learnsicoapp.movieapp.R
 import mycom.learnsicoapp.movieapp.data.remote.firebase.FireStoreClass
 import mycom.learnsicoapp.movieapp.data.remote.firebase.model.UserFirebase
 import mycom.learnsicoapp.movieapp.databinding.FragmentSignUpBinding
 import mycom.learnsicoapp.movieapp.di.Navigator
 import mycom.learnsicoapp.movieapp.ui.BaseFragment
+import mycom.learnsicoapp.movieapp.utils.USERS
 import javax.inject.Inject
 
 /**
@@ -84,8 +88,8 @@ class SignUpFragment : BaseFragment() {
                                     firebaseUser.uid, name, registeredEmail
                                 )
 
-                            FireStoreClass().registerUser(this@SignUpFragment, userFirebase)
-
+                            registerUser(this@SignUpFragment, userFirebase)
+                            (activity as EntryActivity).drawerLayout.open()
                             viewModel.insertInDB(userFirebase)
 
                         } else {
@@ -99,6 +103,24 @@ class SignUpFragment : BaseFragment() {
         }
     }
 
+
+    fun registerUser(activity: SignUpFragment, userInfo: UserFirebase) {
+        FireStoreClass().fireBase.collection(USERS)
+            .document(FireStoreClass().currentUserID())
+            .set(userInfo, SetOptions.merge())
+            .addOnSuccessListener {
+
+                userRegisteredSuccess()
+
+                FireStoreClass().fireBase
+                    .collection(USERS)
+                    .document(FireStoreClass().currentUserID())
+                    .get()
+            }
+            .addOnFailureListener { e ->
+                Log.e(activity.javaClass.simpleName, "Error writing document", e)
+            }
+    }
 
     fun userRegisteredSuccess() {
         Toast.makeText(requireContext(), "You have successfully registered.", Toast.LENGTH_SHORT)

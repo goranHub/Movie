@@ -15,7 +15,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
-import mycom.learnsicoapp.movieapp.data.database.Rating
+import mycom.learnsicoapp.movieapp.data.database.ItemIdWithRating
 import mycom.learnsicoapp.movieapp.data.database.UserRatingsCrossRef
 import mycom.learnsicoapp.movieapp.data.remote.firebase.FireStoreClass
 import mycom.learnsicoapp.movieapp.databinding.FragmentMovieDetailsBinding
@@ -91,11 +91,11 @@ class DetailsMovieFragment : Fragment() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                object : Observer<Rating> {
+                object : Observer<ItemIdWithRating> {
                     override fun onSubscribe(d: Disposable) {
                     }
 
-                    override fun onNext(response: Rating) {
+                    override fun onNext(response: ItemIdWithRating) {
                         val rating = response.rating
                         setFaceBackgroundColor(rating)
                     }

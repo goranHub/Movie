@@ -60,10 +60,10 @@
         tools:layout="@layout/fragment_movie_top">
 
         <action
-            android:id="@+id/navDirectioMoviesDetailsFragment"
+            android:id="@+id/navDirectionMoviesDetailsFragment"
             app:destination="@id/movieDetailsFragment" />
         <action
-            android:id="@+id/navDirectioCrewMovieFragment"
+            android:id="@+id/navDirectionCrewMovieFragment"
             app:destination="@id/crewMovieFragment"/>
     </fragment>
 
@@ -86,10 +86,10 @@
         android:label="@string/popular"
         tools:layout="@layout/fragment_movie_popular">
         <action
-            android:id="@+id/navDirectioMoviesDetailsFragment"
+            android:id="@+id/navDirectionMoviesDetailsFragment"
             app:destination="@id/movieDetailsFragment" />
         <action
-            android:id="@+id/navDirectioCrewMovieFragment"
+            android:id="@+id/navDirectionCrewMovieFragment"
             app:destination="@id/crewMovieFragment" />
     </fragment>
 
@@ -99,7 +99,7 @@
         android:label="@string/search"
         tools:layout="@layout/fragment_movie_search">
         <action
-            android:id="@+id/navDirectioMoviesDetailsFragment"
+            android:id="@+id/navDirectionMoviesDetailsFragment"
             app:destination="@id/movieDetailsFragment" />
     </fragment>
 

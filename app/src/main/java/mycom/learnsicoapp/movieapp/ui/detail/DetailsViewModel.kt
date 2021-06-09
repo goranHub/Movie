@@ -8,7 +8,7 @@ import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import mycom.learnsicoapp.movieapp.data.database.Rating
+import mycom.learnsicoapp.movieapp.data.database.ItemIdWithRating
 import mycom.learnsicoapp.movieapp.data.database.UserRatingsCrossRef
 import mycom.learnsicoapp.movieapp.data.remote.response.movie.Movie
 import mycom.learnsicoapp.movieapp.data.remote.response.tvShow.TvResponse
@@ -36,7 +36,7 @@ class DetailsViewModel @ViewModelInject constructor(
 
     fun getSmileyByMovieId(
         itemId: Int
-    ): Observable<Rating> {
+    ): Observable<ItemIdWithRating> {
         return repository.getSmileyByMovieId(itemId)
     }
 

@@ -18,12 +18,12 @@ class DatabaseDataSource @Inject constructor(
 
     fun insertSmiley(itemId: Int, rating: Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            val rating = Rating(itemId.toString(), rating)
+            val rating = ItemIdWithRating(itemId.toString(), rating)
             dao.insertSmiley(rating)
         }
     }
 
-    suspend fun getRatingsOfUser(currentUser : String): List<UserWithRatings> {
+    suspend fun getRatingsOfUser(currentUser : String): List<ItemIdWithRatingForCurrentUser> {
         return dao.getRatingsOfUser(currentUser)
     }
 
@@ -40,7 +40,7 @@ class DatabaseDataSource @Inject constructor(
         return dao.getAuthUserDB()
     }
 
-    fun getSmileyByMovieId(itemId: Int): Observable<Rating> {
+    fun getSmileyByMovieId(itemId: Int): Observable<ItemIdWithRating> {
         return dao.getSmileyByMovieId(itemId)
     }
 

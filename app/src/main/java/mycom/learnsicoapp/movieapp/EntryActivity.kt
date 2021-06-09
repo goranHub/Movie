@@ -87,21 +87,13 @@ class EntryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
         setupNavigation()
 
-
         //upload myProfil and drawer from DB
         myProfileViewModel.userFromDB.observe(this, {
             val image = it?.image
-            val name = it?.name
-
             if (image != null) {
                 Log.e("simpleName", "2")
                 myProfileViewModel.bindMyProfile.image = image
                 setDrawerHeaderImage(image)
-            }
-
-            if (it?.name != null) {
-                myProfileViewModel.bindMyProfile.name = name
-                setDrawerHeaderProfilName(name)
             }
         })
     }
@@ -140,15 +132,6 @@ class EntryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             }
         }
     }
-
-    private fun setDrawerHeaderProfilName(image: String?) {
-        val headerProfilName =
-            this.navigation_view.getHeaderView(0)
-                .findViewById(R.id.tv_username) as TextView
-
-        headerProfilName.text = image
-    }
-
 
     private fun setDrawerHeaderImage(image: String?) {
         //set into drawer header

@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observer
@@ -67,12 +66,12 @@ class TopMovieFragment@Inject constructor(
 
     fun openItem(movieId :Long){
         val bundleItemId = bundleOf(ITEM_ID to movieId)
-        navigator.navigateWithBundle(R.id.navDirectioMoviesDetailsFragment, bundleItemId)
+        navigator.navigateWithBundle(R.id.navDirectionMoviesDetailsFragment, bundleItemId)
     }
 
     fun openCrew(crewId :Long){
         val bundleCrewId = bundleOf(CREW_ID to crewId)
-        navigator.navigateWithBundle(R.id.navDirectioCrewMovieFragment, bundleCrewId)
+        navigator.navigateWithBundle(R.id.navDirectionCrewMovieFragment, bundleCrewId)
     }
 
     private fun subscribeToObservers() {
