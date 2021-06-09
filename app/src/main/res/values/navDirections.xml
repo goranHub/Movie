@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="navDirectionSignUpFragment" type="id" />
+    <item name="navDirectionSignInFragment" type="id" />
+    <item name="navDirectionIntroFragment" type="id" />
+    <item name="navDirectionTopMovieFragment" type="id" />
+    <item name="navDirectioCrewMovieFragment" type="id" />
+    <item name="navDirectioMoviesDetailsFragment" type="id" />
+</resources>

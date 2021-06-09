@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="50dp"
+        android:paddingStart="40dp"
+        android:paddingEnd="20dp"
+        android:background="@drawable/entry_light_blue_gradient"
+        tools:context=".ui.login.intro.IntroFragment">
+
+        <Button
+            android:id="@+id/btn_sign_in"
+            android:layout_width="325dp"
+            android:layout_height="50dp"
+            android:text="@string/sign_in"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:layout_marginTop="150dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/btn_sign_up"
+            android:layout_width="325dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="50dp"
+            android:text="@string/sign_up"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+    </LinearLayout>
+</layout>
