@@ -71,7 +71,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:background="@color/design_dark_default_color_primary"
+                    android:background="@color/design_default_color_secondary_variant"
                     android:text="@string/overview"
                     app:layout_constraintBottom_toTopOf="@+id/overviewTextView"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -84,13 +84,14 @@
                     android:layout_width="375dp"
                     android:layout_height="wrap_content"
                     android:text="@{data.overview}"
+                    android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/ivImage"
                     app:layout_constraintVertical_bias="0.09"
-                    tools:text="abcdefgh" />
+                    tools:text="overviewTextView text" />
 
                 <TextView
                     android:id="@+id/popularity_Text"
@@ -132,7 +133,7 @@
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/popularity_Text"
-                    tools:text="abcdefgh" />
+                    tools:text="popularity text" />
 
                 <TextView
                     android:id="@+id/release_date"
@@ -145,7 +146,7 @@
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/popularity"
                     app:layout_constraintTop_toBottomOf="@+id/release_date_Text"
-                    tools:text="abcdefgh" />
+                    tools:text="release_date text" />
 
                 <Button
                     android:id="@+id/btnDeleteAll"
@@ -155,6 +156,7 @@
                     android:layout_marginEnd="156dp"
                     android:text="delete"
                     android:textSize="12sp"
+                    android:textColor="@color/white"
                     app:layout_constraintBottom_toTopOf="@+id/smiley"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/release_date"

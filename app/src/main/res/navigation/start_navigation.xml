@@ -8,28 +8,44 @@
 
     <fragment
         android:id="@+id/splashFragment"
-        android:name="mycom.learnsicoapp.movieapp.ui.login.splash.SplashFragment"
+        android:name="mycom.learnsicoapp.movieapp.ui.splash.SplashFragment"
         android:label="Entry"
-        tools:layout="@layout/fragment_entry">
+        tools:layout="@layout/fragment_splash">
         <action
             android:id="@+id/navDirectionIntroFragment"
-            app:destination="@id/introFragment"/>
+            app:destination="@id/introFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
         <action
             android:id="@+id/navDirectionTopMovieFragment"
-            app:destination="@id/topMovieFragment" />
+            app:destination="@id/topMovieFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
         android:id="@+id/introFragment"
         android:name="mycom.learnsicoapp.movieapp.ui.login.intro.IntroFragment"
-        tools:layout="@layout/fragment_intro">
+        tools:layout="@layout/fragment_intro"
         android:label="Intro" >
         <action
             android:id="@+id/navDirectionSignUpFragment"
-            app:destination="@id/signUpFragment" />
+            app:destination="@id/signUpFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
         <action
             android:id="@+id/navDirectionSignInFragment"
-            app:destination="@id/signInFragment" />
+            app:destination="@id/signInFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -39,7 +55,11 @@
         tools:layout="@layout/fragment_sign_in">
         <action
             android:id="@+id/navDirectionTopMovieFragment"
-            app:destination="@id/topMovieFragment" />
+            app:destination="@id/topMovieFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -49,22 +69,34 @@
         tools:layout="@layout/fragment_sign_up">
         <action
             android:id="@+id/navDirectionTopMovieFragment"
-            app:destination="@id/topMovieFragment" />
+            app:destination="@id/topMovieFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
         android:id="@+id/topMovieFragment"
         android:name="mycom.learnsicoapp.movieapp.ui.topmovie.TopMovieFragment"
-        android:label="@string/topMovie"
+        android:label="@string/top_movies"
         app:defaultNavHost="true"
         tools:layout="@layout/fragment_movie_top">
 
         <action
             android:id="@+id/navDirectionMoviesDetailsFragment"
-            app:destination="@id/movieDetailsFragment" />
+            app:destination="@id/movieDetailsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/navDirectionCrewMovieFragment"
-            app:destination="@id/crewMovieFragment"/>
+            app:destination="@id/crewMovieFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -87,10 +119,18 @@
         tools:layout="@layout/fragment_movie_popular">
         <action
             android:id="@+id/navDirectionMoviesDetailsFragment"
-            app:destination="@id/movieDetailsFragment" />
+            app:destination="@id/movieDetailsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
         <action
             android:id="@+id/navDirectionCrewMovieFragment"
-            app:destination="@id/crewMovieFragment" />
+            app:destination="@id/crewMovieFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -100,14 +140,25 @@
         tools:layout="@layout/fragment_movie_search">
         <action
             android:id="@+id/navDirectionMoviesDetailsFragment"
-            app:destination="@id/movieDetailsFragment" />
+            app:destination="@id/movieDetailsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
+
+    <fragment
+        android:id="@+id/savedFragmentAll"
+        android:name="mycom.learnsicoapp.movieapp.ui.savedAll.SavedFragmentAll"
+        android:label="Saved Movies For All Users"
+        tools:layout="@layout/fragment_saved_list" />
 
     <fragment
         android:id="@+id/savedFragment"
         android:name="mycom.learnsicoapp.movieapp.ui.saved.SavedFragment"
-        android:label="Saved Movies"
+        android:label="Saved Movies Current User"
         tools:layout="@layout/fragment_saved_list" />
+
 
     <fragment
         android:id="@+id/myProfileFragment"

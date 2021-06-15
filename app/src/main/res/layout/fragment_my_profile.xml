@@ -6,8 +6,8 @@
 
     <data>
         <variable
-            name="data"
-            type="mycom.learnsicoapp.movieapp.ui.profil.BindMyProfile" />
+            name="viewmodel"
+            type="mycom.learnsicoapp.movieapp.ui.profil.MyProfileViewModel" />
 
     </data>
 
@@ -28,7 +28,7 @@
             app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:loadImageDetails="@{data.image}" />
+            app:loadImageDetails="@{viewmodel.user.imageProfile}" />
 
         <Button
             android:id="@+id/btn_update"

@@ -1,4 +1,4 @@
-package mycom.learnsicoapp.movieapp.ui.login.splash
+package mycom.learnsicoapp.movieapp.ui.splash
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel

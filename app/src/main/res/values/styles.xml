@@ -8,4 +8,20 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">8dp</item>
     </style>
+
+    <style name="NavDrawerTextStyle" parent="Widget.MaterialComponents.NavigationView">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="progressBarBlack" parent="@style/Theme.AppCompat">
+        <item name="colorAccent">@color/black</item>
+    </style>
+
+
+    <style name="blue_200" parent="@style/Theme.AppCompat">
+        <item name="colorAccent">@color/blue_200</item>
+    </style>
+
+
+
 </resources>

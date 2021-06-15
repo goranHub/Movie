@@ -10,6 +10,4 @@ import mycom.learnsicoapp.movieapp.domain.Repository
  */
 class IntroVM  @ViewModelInject constructor(
     private val repository: Repository
-) : ViewModel() {
-
-}
+) : ViewModel()

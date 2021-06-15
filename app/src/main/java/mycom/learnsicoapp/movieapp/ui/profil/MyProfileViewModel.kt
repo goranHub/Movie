@@ -1,24 +1,19 @@
 package mycom.learnsicoapp.movieapp.ui.profil
 
-import android.content.ContentResolver
-import android.content.Context
-import android.net.Uri
 import android.util.Log
-import android.webkit.MimeTypeMap
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.storage.FirebaseStorage
-import mycom.learnsicoapp.movieapp.utils.mapToUserModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import mycom.learnsicoapp.movieapp.data.database.User
+import mycom.learnsicoapp.movieapp.data.database.entities.User
+import mycom.learnsicoapp.movieapp.data.remote.firebase.FireStoreClass
 import mycom.learnsicoapp.movieapp.data.remote.firebase.model.UserFirebase
 import mycom.learnsicoapp.movieapp.data.remote.response.user.UserModel
 import mycom.learnsicoapp.movieapp.domain.Repository
+import mycom.learnsicoapp.movieapp.utils.USERS
 import mycom.learnsicoapp.movieapp.utils.mapToUserEntity
 
 
@@ -29,63 +24,47 @@ import mycom.learnsicoapp.movieapp.utils.mapToUserEntity
 
 
 class MyProfileViewModel @ViewModelInject constructor(
-    @ApplicationContext val appContext: Context,
-    private val repository: Repository
+    private val repository: Repository,
+    private val fireStoreClass: FireStoreClass,
 ) : ViewModel() {
 
-    var bindMyProfile = BindMyProfile()
     var statusProfileUpdateSuccess = MutableLiveData<Boolean?>()
-    var userRemote = MutableLiveData<UserModel?>()
-    var userFromDB = MutableLiveData<User?>()
+    var userFromFirebase = MutableLiveData<UserFirebase?>()
+    var user = UserModel()
 
-
-    interface CallbackUpdateCollection {
-        fun update(profileImageURL : String)
-    }
-    // called in FireStoreClass updateUserProfileData
-    fun profileUpdateSuccess() {
-        statusProfileUpdateSuccess.value = true
-    }
-
-    fun loadFromRemoteVM(userFirebase: UserFirebase) {
-
-        userRemote.value = userFirebase.mapToUserModel()
-
-        //insert into DB
-        val user = userFirebase.mapToUserEntity()
-
-        insertIntoDB(user)
-    }
-       private fun insertIntoDB(user:User){
-        repository.insertUser(user)
+    fun loadUserFromFirebase() : MutableLiveData<UserFirebase?> {
+        FireStoreClass().fireBase.collection(USERS)
+            .document(fireStoreClass.currentUserID())
+            .get()
+            .addOnSuccessListener { document ->
+                val loggedInUser = document.toObject(UserFirebase::class.java)!!
+                userFromFirebase.value = loggedInUser
+                user.imageProfile = userFromFirebase.value?.image
+            }
+            .addOnFailureListener {}
+        return userFromFirebase
     }
 
-    fun getUserFromDbAndBind(currentUserID: String) {
+    fun insertIntoDB(userFromFirebase : MutableLiveData<UserFirebase?> ){
+        userFromFirebase.value?.let { repository.insertUser(it.mapToUserEntity()) }
+    }
+
+    fun getUserFromDbAndUploadUI(currentUserID: String) {
         repository
             .getAuthUserDB()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 object : Observer<List<User>> {
-
                     override fun onSubscribe(d: Disposable) {
                     }
-
                     override fun onError(e: Throwable) {
                         Log.d("error", "${e.stackTrace}")
                     }
-
                     override fun onNext(response: List<User>) {
                         response.map {
                             if (it.id == currentUserID) {
-
-                                userFromDB.value?.image = it.image
-                                userFromDB.value?.name = it.name
-                                userFromDB.value?.email = it.email
-
-                                bindMyProfile.image = it.image.toString()
-                                bindMyProfile.name = it.name.toString()
-                                bindMyProfile.email = it.email.toString()
+                                user.imageProfile = it.image.toString()
                             }
                         }
                     }
@@ -95,10 +74,6 @@ class MyProfileViewModel @ViewModelInject constructor(
             )
     }
 
-    fun fileExtension(uri: Uri?): String? {
-        val cr: ContentResolver = appContext.contentResolver
-        return MimeTypeMap.getSingleton()
-            .getExtensionFromMimeType(cr.getType(uri!!))
-    }
+
 }
 

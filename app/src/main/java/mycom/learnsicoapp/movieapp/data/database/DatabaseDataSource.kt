@@ -4,35 +4,48 @@ import io.reactivex.Observable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import mycom.learnsicoapp.movieapp.data.database.entities.MovieEntity
+import mycom.learnsicoapp.movieapp.data.database.entities.Rating
+import mycom.learnsicoapp.movieapp.data.database.entities.User
+import mycom.learnsicoapp.movieapp.data.database.relations.*
 import javax.inject.Inject
 
-
-/**
- * @author ll4
- * @date 1/20/2021
- */
 
 class DatabaseDataSource @Inject constructor(
     private val dao: DatabaseDao
 ) {
 
-    fun insertSmiley(itemId: Int, rating: Int) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val rating = ItemIdWithRating(itemId.toString(), rating)
-            dao.insertSmiley(rating)
-        }
-    }
-
-    suspend fun getRatingsOfUser(currentUser : String): List<ItemIdWithRatingForCurrentUser> {
+    fun getRatingsOfUser(currentUser : String): Observable<List<UsersWithMovies>> {
         return dao.getRatingsOfUser(currentUser)
     }
 
-    fun insertUser(
-        user: User
-    )
-    {
+    fun getRatingsOfMovie(): Observable<MovieWithRatings> {
+        return dao.getRatingsOfMovie()
+    }
+
+    fun insertUser(user: User){
         CoroutineScope(Dispatchers.IO).launch {
             dao.insertUser(user)
+        }
+    }
+
+    fun insertMovie(movie: MovieEntity){
+        CoroutineScope(Dispatchers.IO).launch {
+            dao.insertMovie(movie)
+        }
+    }
+
+    fun insertRating(rating: Rating){
+        CoroutineScope(Dispatchers.IO).launch {
+            dao.insertRating(rating)
+        }
+    }
+
+
+    fun deleteSmileyByMovieId(movieID: String, userID: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            dao.deleteSmileyByMovieId(movieID)
+            dao.deleteSmileyByMovieIdFormUserMovieCrossRef(movieID, userID)
         }
     }
 
@@ -40,18 +53,20 @@ class DatabaseDataSource @Inject constructor(
         return dao.getAuthUserDB()
     }
 
-    fun getSmileyByMovieId(itemId: Int): Observable<ItemIdWithRating> {
-        return dao.getSmileyByMovieId(itemId)
+    fun getMovieAndRatingWithMovieID(movieID: String): Observable<MovieWithRatings> {
+        return dao.getMovieAndRatingWithMovieID(movieID)
+    }
+
+    fun getRating(movieID: String): Observable<List<MovieAndRating>>{
+        return dao.getRating(movieID)
     }
 
 
-    fun deleteSmileyByMovieId(itemId: Int) {
-       CoroutineScope(Dispatchers.IO).launch {
-           dao.deleteSmileyByMovieId(itemId)
-       }
+    suspend fun insertUserMovieCrossRef(crossRef : UserMovieCrossRef){
+        dao.insertUserMovieCrossRef(crossRef)
     }
 
-    suspend fun insertStudentSubjectCrossRef(crossRef : UserRatingsCrossRef){
-        dao.insertStudentSubjectCrossRef(crossRef)
+    suspend fun insertMovieRatingCrossRef(crossRef : MovieRatingCrossRef){
+        dao.insertMovieRatingCrossRef(crossRef)
     }
 }

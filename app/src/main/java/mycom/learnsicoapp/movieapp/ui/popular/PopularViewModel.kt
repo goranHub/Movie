@@ -12,14 +12,9 @@ import mycom.learnsicoapp.movieapp.domain.Repository
 class PopularViewModel @ViewModelInject constructor (
     private val repository: Repository,
 ) : ViewModel() {
-
     var pageId = 1L
-
     lateinit var callback : (ItemMoviePopularBinding) -> Unit
-
-     fun getPopular(pageId :Long) = repository.getPopular(pageId)
-
-
+    fun getPopular(pageId :Long) = repository.getPopular(pageId)
 }
 
 

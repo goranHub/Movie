@@ -1,4 +1,4 @@
-package mycom.learnsicoapp.movieapp.ui.login.splash
+package mycom.learnsicoapp.movieapp.ui.splash
 
 import android.os.Bundle
 import android.os.Handler
@@ -6,11 +6,9 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.NavOptions
-import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import mycom.learnsicoapp.movieapp.R
-import mycom.learnsicoapp.movieapp.databinding.FragmentEntryBinding
+import mycom.learnsicoapp.movieapp.databinding.FragmentSplashBinding
 import mycom.learnsicoapp.movieapp.di.Navigator
 import mycom.learnsicoapp.movieapp.ui.BaseFragment
 import javax.inject.Inject
@@ -23,7 +21,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class SplashFragment : BaseFragment() {
 
-    lateinit var binding: FragmentEntryBinding
+    lateinit var binding: FragmentSplashBinding
 
     @Inject
     lateinit var navigator: Navigator
@@ -33,11 +31,13 @@ class SplashFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        binding = FragmentEntryBinding.inflate(inflater)
+        binding = FragmentSplashBinding.inflate(inflater)
+        showProgressDialog(resources.getString(R.string.please_wait))
 
         Handler(Looper.getMainLooper()).postDelayed({
+            dialog.dismiss()
             navigator.navigate(R.id.introFragment)
-        }, 1000)
+        }, 500)
 
         return binding.root
     }

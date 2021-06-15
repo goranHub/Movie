@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     app:popUpToInclusive="true">
 
+
     <data>
 
     </data>
@@ -12,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.login.splash.SplashFragment">
+        tools:context=".ui.splash.SplashFragment">
 
 
         <TextView

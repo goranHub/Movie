@@ -3,6 +3,7 @@ package mycom.learnsicoapp.movieapp.ui.profil
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -11,76 +12,59 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import com.bumptech.glide.Glide
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_entry.*
 import mycom.learnsicoapp.movieapp.EntryActivity
-import mycom.learnsicoapp.movieapp.R
 import mycom.learnsicoapp.movieapp.data.remote.firebase.FireStoreClass
-import mycom.learnsicoapp.movieapp.data.remote.firebase.model.UserFirebase
 import mycom.learnsicoapp.movieapp.databinding.FragmentMyProfileBinding
 import mycom.learnsicoapp.movieapp.ui.BaseFragment
 import mycom.learnsicoapp.movieapp.utils.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class MyProfileFragment : BaseFragment() {
+class MyProfileFragment(val fireStoreClass: FireStoreClass) : BaseFragment() {
 
-    var selectedImageUri: Uri? = null
-    var profileImageURL: String = ""
+    private var selectedImageUri: Uri? = null
+    private var profileImageURL: String = ""
     private val viewModel by viewModels<MyProfileViewModel>()
     private lateinit var binding: FragmentMyProfileBinding
 
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        loadFromRemoteFC(viewModel)
-        val currentUserID = FireStoreClass().currentUserID()
-        viewModel.getUserFromDbAndBind(currentUserID)
-    }
-
-    private fun loadFromRemoteFC(viewModel: MyProfileViewModel) {
-        FireStoreClass().fireBase.collection(USERS)
-            .document(FireStoreClass().currentUserID())
-            .get()
-            .addOnSuccessListener { document ->
-                val loggedInUser = document.toObject(UserFirebase::class.java)!!
-                viewModel.loadFromRemoteVM(loggedInUser)
-            }
-            .addOnFailureListener {
-
-            }
+        viewModel.loadUserFromFirebase()
+        viewModel.insertIntoDB(viewModel.userFromFirebase)
+        viewModel.getUserFromDbAndUploadUI(fireStoreClass.currentUserID())
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         binding = FragmentMyProfileBinding.inflate(inflater)
-
-        binding.data = viewModel.bindMyProfile
+        binding.apply {
+            lifecycleOwner = this@MyProfileFragment
+            viewmodel = viewModel
+        }
 
         imageOnClickListener()
-
         buttonOnClickListener()
-
         return binding.root
     }
 
     private fun imageOnClickListener() {
         binding.ivProfileUserImage.setOnClickListener {
             if (context?.let { context ->
-                    ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                    )
+                    ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
                 } == PackageManager.PERMISSION_GRANTED
             ) {
                 imageChooser()
@@ -100,7 +84,7 @@ class MyProfileFragment : BaseFragment() {
     private fun buttonOnClickListener() {
         binding.btnUpdate.setOnClickListener {
             uploadImageToFireStorage(selectedImageUri)
-            viewModel.bindMyProfile.image = selectedImageUri.toString()
+            viewModel.user.imageProfile = selectedImageUri.toString()
         }
 
         viewModel.statusProfileUpdateSuccess.observe(viewLifecycleOwner, Observer { status ->
@@ -123,30 +107,26 @@ class MyProfileFragment : BaseFragment() {
                 imageChooser()
             } else {
                 //Displaying another toast if permission is not granted
-                Toast.makeText(
-                    context,
-                    "you denied the permission",
-                    Toast.LENGTH_LONG
-                ).show()
+                Toast.makeText(context,"you denied the permission", Toast.LENGTH_LONG).show()
             }
         }
     }
 
-    fun updateProfileToFireCollection(
+    private fun updateProfileToFireCollection(
         viewModel: MyProfileViewModel,
         profileImageURL: String
     ) {
         val userHashMap = HashMap<String, Any>()
-        if (profileImageURL.isNotEmpty() && profileImageURL != viewModel.userRemote.value?.image ?: return) {
+        if (profileImageURL.isNotEmpty() && profileImageURL != viewModel.userFromFirebase.value?.image ?: return) {
             userHashMap[USER_IMAGE] = profileImageURL
         }
 
         FireStoreClass().fireBase.collection(USERS)
-            .document(FireStoreClass().currentUserID())
+            .document(fireStoreClass.currentUserID())
             .update(userHashMap)
             .addOnSuccessListener {
                 Log.e(viewModel.javaClass.simpleName, "updated was successfully")
-                viewModel.profileUpdateSuccess()
+                viewModel.statusProfileUpdateSuccess.value = true
             }
             .addOnFailureListener { msg ->
                 Log.e(
@@ -156,45 +136,33 @@ class MyProfileFragment : BaseFragment() {
             }
     }
 
-
     private fun uploadImageToFireStorage(selectedImageUri: Uri?) {
         if (selectedImageUri != null) {
-
             //get the storage reference
             val storageReference =
-                FirebaseStorage
-                    .getInstance()
-                    .reference
-                    .child("USER_IMAGE" + System.currentTimeMillis() + "."
-                            + viewModel.fileExtension(selectedImageUri))
-
+                FirebaseStorage.getInstance().reference
+                    .child(
+                        "USER_IMAGE" + System.currentTimeMillis() + "."
+                                + fileExtension(selectedImageUri, requireContext())
+                    )
             //put image to fire storage
             storageReference
                 .putFile(selectedImageUri)
                 .addOnSuccessListener { snapshot ->
-                    // Get the downloadable url from the snapshot
-                    snapshot
-                        .metadata!!
-                        .reference!!
-                        .downloadUrl
-                        // take the url and upadate collection
+                    snapshot.metadata!!.reference!!.downloadUrl
                         .addOnSuccessListener { uri ->
                             profileImageURL = uri.toString()
                             updateProfileToFireCollection(viewModel, profileImageURL)
                         }
                 }
                 .addOnFailureListener { exception ->
-                    Log.e("fail", exception.localizedMessage )
+                    Log.e("fail", exception.localizedMessage)
                 }
         }
     }
 
     private fun imageChooser() {
-        //select image of phone storage
-        val galleryIntent = Intent(
-            Intent.ACTION_PICK,
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        )
+        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         this.startActivityForResult(galleryIntent, PICK_IMAGE_REQUEST_CODE)
     }
 
@@ -206,26 +174,14 @@ class MyProfileFragment : BaseFragment() {
         ) {
             selectedImageUri = intent.data!!
             //from device to layout
-            setDrawerHeaderImage(selectedImageUri.toString())
-            viewModel.bindMyProfile.image = selectedImageUri.toString()
+            setDrawerHeaderImage(selectedImageUri.toString(), (activity) as EntryActivity)
+
+            val editor = sharedPreferences.edit()
+            editor.putString(PREF_NAME, selectedImageUri.toString())
+            editor.apply()
+            viewModel.user.imageProfile = selectedImageUri.toString()
             uploadImageToFireStorage(selectedImageUri)
             (activity as EntryActivity).drawerLayout.open()
-        }
-    }
-
-    private fun setDrawerHeaderImage(image: String?) {
-        //set into drawer header
-        val headerProfileImageView =
-            (activity as mycom.learnsicoapp.movieapp.EntryActivity).navigation_view.getHeaderView(0)
-                .findViewById(R.id.header_imageView) as ImageView
-
-        context?.let { context ->
-            Glide
-                .with(context)
-                .load(image)
-                .centerCrop()
-                .placeholder(R.drawable.ic_baseline_person_24)
-                .into(headerProfileImageView)
         }
     }
 }

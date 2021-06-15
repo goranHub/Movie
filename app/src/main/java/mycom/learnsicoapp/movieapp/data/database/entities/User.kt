@@ -1,21 +1,14 @@
-package mycom.learnsicoapp.movieapp.data.database
+package mycom.learnsicoapp.movieapp.data.database.entities
 
-import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.android.parcel.Parcelize
 
-/**
- * @author ll4
- * @date 1/22/2021
- */
 
 @Entity
-@Parcelize
 data class User(
     @PrimaryKey(autoGenerate = false)
-    @ColumnInfo(name = "id")
+    @ColumnInfo(name = "userId")
     var id: String,
     @ColumnInfo(name = "name")
     var name: String?,
@@ -23,11 +16,7 @@ data class User(
     var email: String?,
     @ColumnInfo(name = "image")
     var image: String?,
-    @ColumnInfo(name = "movieId")
-    var movieId: String?,
-    @ColumnInfo(name = "movieRating")
-    var movieRating: String?,
     @ColumnInfo(name = "fcmToken")
     var fcmToken: String?
-) : Parcelable
+)
 

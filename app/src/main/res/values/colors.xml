@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#0592F8</color>
-    <color name="colorAccent">#0C90F2</color>
-    <color name="colorPrimaryDark">#0C90F2</color>
-    <color name="colorToolbar">#7C099C</color>
-    <color name="colorBottom">#BA634581</color>
+    <color name="colorPrimary">#3A5274</color>
+    <color name="colorAccent">#66999B</color>
+    <color name="colorPrimaryDark">#496A81</color>
+    <color name="colorToolbar">#B3AF8F</color>
+    <color name="colorBottomNav">#B3AF8F</color>
+    <color name="colorBottom">#B3AF8F</color>
     <color name="item_crew_color">@color/purple_700</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>

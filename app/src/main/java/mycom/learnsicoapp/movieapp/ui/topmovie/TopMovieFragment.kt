@@ -13,16 +13,21 @@ import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import mycom.learnsicoapp.movieapp.R
-import mycom.learnsicoapp.movieapp.data.remote.response.movie.MovieResponse
 import mycom.learnsicoapp.movieapp.databinding.FragmentMovieTopBinding
 import mycom.learnsicoapp.movieapp.databinding.ItemMovieTopBinding
 import mycom.learnsicoapp.movieapp.di.Navigator
 import mycom.learnsicoapp.movieapp.ui.BaseFragment
 import mycom.learnsicoapp.movieapp.ui.popular.BindMovie
 import mycom.learnsicoapp.movieapp.utils.CREW_ID
-import mycom.learnsicoapp.movieapp.utils.ITEM_ID
+import mycom.learnsicoapp.movieapp.utils.MOVIE_ID
 import javax.inject.Inject
+import android.view.animation.AnimationUtils
+
+import android.view.animation.LayoutAnimationController
+import androidx.recyclerview.widget.LinearLayoutManager
+import mycom.learnsicoapp.movieapp.R
+import mycom.learnsicoapp.movieapp.data.remote.response.movie.Movie
+
 
 @AndroidEntryPoint
 class TopMovieFragment@Inject constructor(
@@ -39,15 +44,20 @@ class TopMovieFragment@Inject constructor(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val animation: LayoutAnimationController = AnimationUtils.loadLayoutAnimation(requireActivity(), R.anim.down_to_up)
 
         viewModel = viewModel ?: ViewModelProvider(requireActivity()).get(TopMovieViewModel::class.java)
         binding = FragmentMovieTopBinding.inflate(inflater)
-        binding.recylerViewFragmentTopMovie.adapter = adapter
+
         subscribeToObservers()
 
         binding.apply {
+            recylerViewFragmentTopMovie.adapter = adapter
             lifecycleOwner = viewLifecycleOwner
             viewModel = this@TopMovieFragment.viewModel
+            recylerViewFragmentTopMovie.layoutAnimation = animation
+            recylerViewFragmentTopMovie.layoutManager = LinearLayoutManager(requireContext())
+            recylerViewFragmentTopMovie.scheduleLayoutAnimation();
         }
 
         adapter.listenerCall = object : TopMovieAdapter.ListenerCall{
@@ -58,6 +68,8 @@ class TopMovieFragment@Inject constructor(
             }
         }
 
+
+
         scrollRecyclerView()
 
         return binding.root
@@ -65,7 +77,7 @@ class TopMovieFragment@Inject constructor(
 
 
     fun openItem(movieId :Long){
-        val bundleItemId = bundleOf(ITEM_ID to movieId)
+        val bundleItemId = bundleOf(MOVIE_ID to movieId)
         navigator.navigateWithBundle(R.id.navDirectionMoviesDetailsFragment, bundleItemId)
     }
 
@@ -80,14 +92,14 @@ class TopMovieFragment@Inject constructor(
 
         popular?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribe(
-                object : Observer<MovieResponse> {
+            ?.subscribe(object : Observer<Movie> {
                     override fun onSubscribe(d: Disposable) {
                     }
 
-                    override fun onNext(response: MovieResponse) {
+                    override fun onNext(response: Movie) {
                         val movieItemsList = response.results.map { BindMovie(it) }
                         adapter.addMovies(movieItemsList)
+                        adapter.notifyDataSetChanged()
                         pageId++
                     }
 

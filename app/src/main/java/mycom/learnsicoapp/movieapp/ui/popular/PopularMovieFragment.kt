@@ -14,13 +14,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import mycom.learnsicoapp.movieapp.R
-import mycom.learnsicoapp.movieapp.data.remote.response.movie.MovieResponse
+import mycom.learnsicoapp.movieapp.data.remote.response.movie.Movie
 import mycom.learnsicoapp.movieapp.databinding.FragmentMoviePopularBinding
 import mycom.learnsicoapp.movieapp.databinding.ItemMoviePopularBinding
 import mycom.learnsicoapp.movieapp.di.Navigator
 import mycom.learnsicoapp.movieapp.ui.BaseFragment
 import mycom.learnsicoapp.movieapp.utils.CREW_ID
-import mycom.learnsicoapp.movieapp.utils.ITEM_ID
+import mycom.learnsicoapp.movieapp.utils.MOVIE_ID
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -39,7 +39,8 @@ class PopularMovieFragment @Inject constructor(
         savedInstanceState: Bundle?
     ): View {
 
-        viewModel = viewModel ?: ViewModelProvider(requireActivity()).get(PopularViewModel::class.java)
+        viewModel =
+            viewModel ?: ViewModelProvider(requireActivity()).get(PopularViewModel::class.java)
         binding = FragmentMoviePopularBinding.inflate(inflater)
         binding.recylerViewFragmentTopMovie.adapter = adapter
         subscribeToObservers()
@@ -63,7 +64,7 @@ class PopularMovieFragment @Inject constructor(
     }
 
     fun openItem(movieId: Long) {
-        val bundleItemId = bundleOf(ITEM_ID to movieId)
+        val bundleItemId = bundleOf(MOVIE_ID to movieId)
         navigator.navigateWithBundle(R.id.navDirectionMoviesDetailsFragment, bundleItemId)
     }
 
@@ -74,34 +75,24 @@ class PopularMovieFragment @Inject constructor(
 
     private fun subscribeToObservers() {
         var pageId = 1L
-        val popular = viewModel?.getPopular(pageId)
 
-
-        popular?.subscribeOn(Schedulers.io())
+        viewModel?.getPopular(pageId)
+            ?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribe(
-                object : Observer<MovieResponse> {
-                    override fun onSubscribe(d: Disposable) {
-                    }
-
-                    override fun onNext(response: MovieResponse) {
-                        val movieItemsList =
-                            response
-                                .results
-                                .map { BindMovie(it) }
-                        adapter.addMovies(movieItemsList)
-                        pageId++
-                    }
-
-                    override fun onError(e: Throwable) {
-                        Log.d("error", "${e.stackTrace}")
-                    }
-
-                    override fun onComplete() {
-                    }
-
+            ?.subscribe(object : Observer<Movie> {
+                override fun onSubscribe(d: Disposable) {
                 }
-            )
+                override fun onNext(response: Movie) {
+                    val movieItemsList = response.results.map { BindMovie(it) }
+                    adapter.addMovies(movieItemsList)
+                    pageId++
+                }
+                override fun onError(e: Throwable) {
+                    Log.d("error", "${e.stackTrace}")
+                }
+                override fun onComplete() {
+                }
+            })
     }
 
     private fun scrollRecyclerView() {

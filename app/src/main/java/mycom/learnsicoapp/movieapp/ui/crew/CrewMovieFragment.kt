@@ -14,9 +14,7 @@ import mycom.learnsicoapp.movieapp.utils.CREW_ID
 class CrewMovieFragment : Fragment() {
 
     private lateinit var binding: FragmentMovieCrewBinding
-
     private val viewModel: CrewViewModel by viewModels()
-
     var crewId = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,13 +28,9 @@ class CrewMovieFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         binding = FragmentMovieCrewBinding.inflate(inflater)
-
         updateUI(crewId)
-
         binding.data = viewModel
-
         return binding.root
     }
 

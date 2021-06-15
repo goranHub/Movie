@@ -14,7 +14,6 @@ import javax.inject.Inject
 class SearchAdapter @Inject constructor() : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 
     private var searchItems = mutableListOf<BindMulti>()
-    private var onClickListener: OnClickListener? = null
     lateinit var binding : ItemMovieSearchBinding
     lateinit var mediaTyp: String
     lateinit var listenerCall: ListenerCall
@@ -57,14 +56,6 @@ class SearchAdapter @Inject constructor() : RecyclerView.Adapter<SearchAdapter.S
     fun clearItems() {
         searchItems.clear()
         notifyDataSetChanged()
-    }
-
-    fun setOnClickListener(onClickListener: OnClickListener) {
-        this.onClickListener = onClickListener
-    }
-
-    interface OnClickListener {
-        fun openDetails(movieId: Long, mediaTyp: String)
     }
 }
 

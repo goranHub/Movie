@@ -8,17 +8,15 @@ import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import mycom.learnsicoapp.movieapp.data.database.ItemIdWithRating
-import mycom.learnsicoapp.movieapp.data.database.UserRatingsCrossRef
-import mycom.learnsicoapp.movieapp.data.remote.response.movie.Movie
+import mycom.learnsicoapp.movieapp.data.database.entities.MovieEntity
+import mycom.learnsicoapp.movieapp.data.database.entities.Rating
+import mycom.learnsicoapp.movieapp.data.database.relations.MovieAndRating
+import mycom.learnsicoapp.movieapp.data.database.relations.MovieRatingCrossRef
+import mycom.learnsicoapp.movieapp.data.database.relations.MovieWithRatings
+import mycom.learnsicoapp.movieapp.data.database.relations.UserMovieCrossRef
 import mycom.learnsicoapp.movieapp.data.remote.response.tvShow.TvResponse
 import mycom.learnsicoapp.movieapp.domain.Repository
 import mycom.learnsicoapp.movieapp.utils.URL_IMAGE
-
-/**
- * @author ll4
- * @date 12/6/2020
- */
 
 class DetailsViewModel @ViewModelInject constructor(
     private var repository: Repository,
@@ -26,45 +24,54 @@ class DetailsViewModel @ViewModelInject constructor(
 
     var bindDetails = BindDetails()
 
-    fun insertSmiley(itemID: Int, rating: Int) {
-        repository.insertSmiley(itemID, rating)
+
+    suspend fun insertUserMovieCrossRef(crossRef: UserMovieCrossRef) {
+        repository.insertUserMovieCrossRef(crossRef)
     }
 
-    suspend fun insertUserMovieRatingCrossRef(crossRef: UserRatingsCrossRef) {
-        repository.insertUserMovieRatingCrossRef(crossRef)
+    suspend fun insertMovieRatingCrossRef(crossRef: MovieRatingCrossRef) {
+        repository.insertMovieRatingCrossRef(crossRef)
     }
 
-    fun getSmileyByMovieId(
-        itemId: Int
-    ): Observable<ItemIdWithRating> {
-        return repository.getSmileyByMovieId(itemId)
+    fun insertRating(rating: Rating) {
+        repository.insertRating(rating)
     }
 
-    fun deleteSmileyByMovieId(itemId: Int) {
-        repository.deleteSmileyByMovieId(itemId)
+    fun insertMovie(movie: MovieEntity) {
+        repository.insertMovie(movie)
+    }
+
+    fun getMovieAndRatingWithMovieID(movieID: String): Observable<MovieWithRatings> {
+        return repository.getMovieAndRatingWithMovieID(movieID)
+    }
+
+
+    fun getRating(movieID: String): Observable<List<MovieAndRating>> {
+        return repository.getRating(movieID)
+    }
+
+    fun deleteSmileyByMovieId(movieID: String, userID: String) {
+        repository.deleteSmileyByMovieId(movieID, userID)
     }
 
     fun getMovieByID(movieId: Long) {
         repository
-            .getMovieByID(movieId)
+            .getMovieByIDFromNetwork(movieId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                object : Observer<Movie> {
+                object : Observer<mycom.learnsicoapp.movieapp.data.remote.response.movie.MovieResponse> {
                     override fun onSubscribe(d: Disposable) {
                     }
-
-                    override fun onNext(response: Movie) {
+                    override fun onNext(response: mycom.learnsicoapp.movieapp.data.remote.response.movie.MovieResponse) {
                         bindDetails.imageUrl = URL_IMAGE + response.posterPath
                         bindDetails.overview = response.overview
                         bindDetails.popularity = response.popularity
                         bindDetails.releaseDate = response.releaseDate
                     }
-
                     override fun onError(e: Throwable) {
                         Log.d("error", "${e.stackTrace}")
                     }
-
                     override fun onComplete() {
                     }
                 }
@@ -78,21 +85,17 @@ class DetailsViewModel @ViewModelInject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 object : Observer<TvResponse> {
-
                     override fun onSubscribe(d: Disposable) {
                     }
-
                     override fun onNext(response: TvResponse) {
                         bindDetails.imageUrl = URL_IMAGE + response.posterPath
                         bindDetails.overview = response.overview
                         bindDetails.popularity = response.popularity.toString()
                         bindDetails.releaseDate = response.first_air_date
                     }
-
                     override fun onError(e: Throwable) {
                         Log.d("error", "${e.stackTrace}")
                     }
-
                     override fun onComplete() {
                     }
                 }

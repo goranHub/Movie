@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -30,15 +29,14 @@ import javax.inject.Inject
  * @date 1/14/2021
  */
 @AndroidEntryPoint
-class SignUpFragment : BaseFragment() {
+class SignUpFragment(val fireStoreClass: FireStoreClass) : BaseFragment() {
 
     lateinit var binding: FragmentSignUpBinding
-    lateinit var userFirebase: UserFirebase
+    private lateinit var userFirebase: UserFirebase
     private val viewModel by viewModels<SignUpVM>()
 
     @Inject
     lateinit var navigator: Navigator
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -83,38 +81,28 @@ class SignUpFragment : BaseFragment() {
                             val firebaseUser: FirebaseUser = task.result!!.user!!
                             val registeredEmail = firebaseUser.email!!
 
-                            userFirebase =
-                                UserFirebase(
-                                    firebaseUser.uid, name, registeredEmail
-                                )
+                            userFirebase = UserFirebase(firebaseUser.uid, name, registeredEmail)
 
                             registerUser(this@SignUpFragment, userFirebase)
-                            (activity as EntryActivity).drawerLayout.open()
                             viewModel.insertInDB(userFirebase)
-
+                            (activity as EntryActivity).drawerLayout.open()
                         } else {
-                            Toast.makeText(
-                                requireContext(),
-                                task.exception!!.message,
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toast.makeText(requireContext(), task.exception!!.message, Toast.LENGTH_SHORT).show()
                         }
                     })
         }
     }
 
 
-    fun registerUser(activity: SignUpFragment, userInfo: UserFirebase) {
+    private fun registerUser(activity: SignUpFragment, userInfo: UserFirebase) {
         FireStoreClass().fireBase.collection(USERS)
-            .document(FireStoreClass().currentUserID())
+            .document(fireStoreClass.currentUserID())
             .set(userInfo, SetOptions.merge())
             .addOnSuccessListener {
-
                 userRegisteredSuccess()
-
                 FireStoreClass().fireBase
                     .collection(USERS)
-                    .document(FireStoreClass().currentUserID())
+                    .document(fireStoreClass.currentUserID())
                     .get()
             }
             .addOnFailureListener { e ->
@@ -122,7 +110,7 @@ class SignUpFragment : BaseFragment() {
             }
     }
 
-    fun userRegisteredSuccess() {
+    private fun userRegisteredSuccess() {
         Toast.makeText(requireContext(), "You have successfully registered.", Toast.LENGTH_SHORT)
             .show()
         hideProgressDialog()

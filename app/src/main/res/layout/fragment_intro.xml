@@ -14,7 +14,7 @@
         android:paddingTop="50dp"
         android:paddingStart="40dp"
         android:paddingEnd="20dp"
-        android:background="@drawable/entry_light_blue_gradient"
+        android:background="@drawable/main_background_gradient"
         tools:context=".ui.login.intro.IntroFragment">
 
         <Button

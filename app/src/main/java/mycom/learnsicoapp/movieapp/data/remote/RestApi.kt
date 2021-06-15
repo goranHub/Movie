@@ -1,8 +1,8 @@
 package mycom.learnsicoapp.movieapp.data.remote
 
 import io.reactivex.Observable
-import mycom.learnsicoapp.movieapp.data.remote.response.movie.Movie
 import mycom.learnsicoapp.movieapp.data.remote.response.movie.MovieResponse
+import mycom.learnsicoapp.movieapp.data.remote.response.movie.Movie
 import mycom.learnsicoapp.movieapp.data.remote.response.multi.Multi
 import mycom.learnsicoapp.movieapp.data.remote.response.tvShow.TvResponse
 import retrofit2.http.GET
@@ -19,13 +19,13 @@ interface RestApi {
     fun getTopRated(
         @Query("api_key") apiKey: String?,
         @Query("page") page: String?
-    ): Observable<MovieResponse>
+    ): Observable<Movie>
 
     @GET("movie/popular")
     fun getPopular(
         @Query("api_key") apiKey: String?,
         @Query("page") page: String?
-    ): Observable<MovieResponse>
+    ): Observable<Movie>
 
     @GET("search/multi?")
     fun getMulti(
@@ -37,7 +37,7 @@ interface RestApi {
     fun getCrewByMovieId(
         @Path("id") id: Long,
         @Query("api_key") apiKey: String
-    ): Observable<Movie>
+    ): Observable<MovieResponse>
 
     @GET("tv/{id}")
     fun getTvShowById(
@@ -49,6 +49,5 @@ interface RestApi {
     fun getMovieByID(
         @Path("id") id: Long,
         @Query("api_key") apiKey: String
-    ): Observable<Movie>
-
+    ): Observable<MovieResponse>
 }

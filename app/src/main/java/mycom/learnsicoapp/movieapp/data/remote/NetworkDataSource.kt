@@ -2,8 +2,8 @@ package mycom.learnsicoapp.movieapp.data.remote
 
 
 import io.reactivex.Observable
-import mycom.learnsicoapp.movieapp.data.remote.response.movie.Movie
 import mycom.learnsicoapp.movieapp.data.remote.response.movie.MovieResponse
+import mycom.learnsicoapp.movieapp.data.remote.response.movie.Movie
 import mycom.learnsicoapp.movieapp.data.remote.response.multi.Multi
 import mycom.learnsicoapp.movieapp.data.remote.response.tvShow.TvResponse
 import mycom.learnsicoapp.movieapp.utils.API_KEY
@@ -18,11 +18,11 @@ class NetworkDataSource @Inject constructor(
     private val movieService: RestApi
 ) {
 
-    fun getTopRated(pageId: Long): Observable<MovieResponse> {
+    fun getTopRated(pageId: Long): Observable<Movie> {
         return movieService.getTopRated(API_KEY, pageId.toString())
     }
 
-    fun getPopular(pageId: Long): Observable<MovieResponse> {
+    fun getPopular(pageId: Long): Observable<Movie> {
         return movieService.getPopular(API_KEY, pageId.toString())
     }
 
@@ -30,7 +30,7 @@ class NetworkDataSource @Inject constructor(
         return movieService.getMulti(API_KEY, query)
     }
 
-    fun getMovieByID(movieId: Long): Observable<Movie> {
+    fun getMovieByID(movieId: Long): Observable<MovieResponse> {
         return movieService.getMovieByID(movieId, API_KEY)
     }
 
@@ -38,7 +38,7 @@ class NetworkDataSource @Inject constructor(
         return movieService.getTvShowById(movieId, API_KEY)
     }
 
-    fun getCrewByMovieId(movieId: Long): Observable<Movie> {
+    fun getCrewByMovieId(movieId: Long): Observable<MovieResponse> {
         return movieService.getCrewByMovieId(movieId, API_KEY)
     }
 }

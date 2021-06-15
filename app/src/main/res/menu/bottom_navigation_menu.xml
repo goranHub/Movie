@@ -3,7 +3,7 @@
     <group android:checkableBehavior="single">
 
     <item android:id="@+id/topMovieFragment"
-        android:title="@string/topMovie"
+        android:title="@string/top_movies"
         android:icon="@drawable/ic_baseline_local_movies_24"/>
 
     <item android:id="@+id/popularMovieFragment"

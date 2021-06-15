@@ -4,8 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="mycom.learnsicoapp.movieapp.ui.login.signIn.SignInVM.FormErrors" />
-
         <variable
             name="data"
             type="mycom.learnsicoapp.movieapp.ui.login.signIn.BindSignIn" />
@@ -26,7 +24,7 @@
         android:paddingTop="50dp"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
-        android:background="@drawable/entry_light_blue_gradient"
+        android:background="@drawable/main_background_gradient"
         tools:context=".ui.login.signIn.SignInFragment">
 
 
@@ -56,8 +54,9 @@
             style="@style/OutlinedRoundedBox"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="10dp"
             android:background="@color/white"
+            app:endIconMode="password_toggle"
             android:hint="please enter your password"
             app:boxStrokeColor="@color/text_input_default_box_stroke_color">
 

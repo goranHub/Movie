@@ -1,14 +1,13 @@
 package mycom.learnsicoapp.movieapp.ui.login.signIn
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
 import mycom.learnsicoapp.movieapp.EntryActivity
 import mycom.learnsicoapp.movieapp.R
@@ -17,26 +16,28 @@ import mycom.learnsicoapp.movieapp.data.remote.firebase.model.UserFirebase
 import mycom.learnsicoapp.movieapp.databinding.FragmentSignInBinding
 import mycom.learnsicoapp.movieapp.di.Navigator
 import mycom.learnsicoapp.movieapp.ui.BaseFragment
+import mycom.learnsicoapp.movieapp.utils.PREF_NAME
 import mycom.learnsicoapp.movieapp.utils.USERS
+import mycom.learnsicoapp.movieapp.utils.setDrawerHeaderImage
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SignInFragment : BaseFragment() {
+class SignInFragment(val fireStoreClass: FireStoreClass) : BaseFragment() {
 
     lateinit var binding: FragmentSignInBinding
 
     @Inject
     lateinit var navigator: Navigator
 
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         binding = FragmentSignInBinding.inflate(inflater)
-
         binding.btnSignIn.setOnClickListener { signInRegisteredUser() }
-
         return binding.root
     }
 
@@ -55,24 +56,19 @@ class SignInFragment : BaseFragment() {
                         (activity as EntryActivity).drawerLayout.open()
                     } else {
                         Toast.makeText(
-                            requireContext(),
-                            task.exception!!.message,
-                            Toast.LENGTH_LONG
+                            requireContext(), task.exception!!.message, Toast.LENGTH_LONG
                         ).show()
                     }
                 }
         }
     }
 
-
-    fun signInUser(fragment: SignInFragment) {
-        FireStoreClass().fireBase.collection(USERS)
-            .document(FireStoreClass().currentUserID())
+    private fun signInUser(fragment: SignInFragment) {
+        fireStoreClass.fireBase.collection(USERS)
+            .document(fireStoreClass.currentUserID())
             .get()
             .addOnSuccessListener { document ->
-                Log.e(
-                    fragment.javaClass.simpleName, document.toString()
-                )
+                Log.e(fragment.javaClass.simpleName, document.toString())
                 val loggedInUser = document.toObject(UserFirebase::class.java)!!
                 signInSuccess(loggedInUser)
             }
@@ -81,9 +77,13 @@ class SignInFragment : BaseFragment() {
             }
     }
 
-
-    fun signInSuccess(user: UserFirebase) {
+    fun signInSuccess(userFirebase: UserFirebase) {
         hideProgressDialog()
+        setDrawerHeaderImage(userFirebase.image, (activity) as EntryActivity)
+
+        val editor = sharedPreferences.edit()
+        editor.putString(PREF_NAME, userFirebase.image)
+        editor.apply()
         navigator.navigate(R.id.navDirectionTopMovieFragment)
     }
 }

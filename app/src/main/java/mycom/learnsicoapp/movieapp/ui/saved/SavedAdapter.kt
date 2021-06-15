@@ -9,15 +9,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import mycom.learnsicoapp.movieapp.R
-import mycom.learnsicoapp.movieapp.data.database.ItemIdWithRating
-import mycom.learnsicoapp.movieapp.data.remote.response.movie.Movie
+import mycom.learnsicoapp.movieapp.data.database.entities.Rating
+import mycom.learnsicoapp.movieapp.data.remote.response.movie.MovieResponse
 import mycom.learnsicoapp.movieapp.utils.URL_IMAGE
 
 class SavedAdapter : RecyclerView.Adapter<SavedAdapter.ViewHolderSaved>() {
 
-    var listSaved = listOf<ItemIdWithRating>()
-
-    var movieList = listOf<Movie>()
+    var listRating = listOf<Rating>()
+    var movieList = listOf<MovieResponse>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderSaved {
         val view = LayoutInflater.from(parent.context)
@@ -27,22 +26,20 @@ class SavedAdapter : RecyclerView.Adapter<SavedAdapter.ViewHolderSaved>() {
 
     override fun getItemCount(): Int = movieList.size
 
+
     override fun onBindViewHolder(holder: ViewHolderSaved, position: Int) {
+        holder.contentView.text = listRating[position].rating
 
-        val dataModel = listSaved[position]
         val dataMovie = movieList[position]
-
-        holder.contentView.text = dataModel.rating.toString()
-
         Glide.with(holder.idView.rootView.context)
             .load(URL_IMAGE + dataMovie.posterPath)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(holder.idView)
     }
 
-    fun addMovieWithRating(allElement: List<Movie>, list: List<ItemIdWithRating>) {
+    fun addMovieWithRating(allElement: List<MovieResponse>, list: List<Rating>) {
         movieList = allElement
-        listSaved = list
+        listRating = list
         notifyDataSetChanged()
     }
 

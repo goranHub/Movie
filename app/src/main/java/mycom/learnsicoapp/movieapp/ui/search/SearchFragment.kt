@@ -16,7 +16,7 @@ import mycom.learnsicoapp.movieapp.R
 import mycom.learnsicoapp.movieapp.databinding.FragmentMovieSearchBinding
 import mycom.learnsicoapp.movieapp.databinding.ItemMovieSearchBinding
 import mycom.learnsicoapp.movieapp.di.Navigator
-import mycom.learnsicoapp.movieapp.utils.ITEM_ID
+import mycom.learnsicoapp.movieapp.utils.MOVIE_ID
 import mycom.learnsicoapp.movieapp.utils.MEDIATYP
 import javax.inject.Inject
 
@@ -44,8 +44,7 @@ class SearchFragment @Inject constructor(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel =
-            viewModel ?: ViewModelProvider(requireActivity()).get(SearchViewModel::class.java)
+        viewModel = viewModel ?: ViewModelProvider(requireActivity()).get(SearchViewModel::class.java)
 
         searchSuggestionsAdapter = SearchSuggestionsAdapter(
             requireContext(), android.R.layout.simple_dropdown_item_1line
@@ -79,13 +78,15 @@ class SearchFragment @Inject constructor(
 
         binding.etTvShows.doOnTextChanged { text, _, _, _ ->
             binding.progressBar.visibility = View.VISIBLE
+            binding.progressBar2.progress
             viewModel?.fetchMoviesAndTvShowsList(text.toString())
             observeData("tvshow")
         }
 
 
         binding.etMovies.doOnTextChanged { text, _, _, _ ->
-            binding.progressBar.visibility = View.VISIBLE
+            binding.progressBar2.visibility = View.VISIBLE
+            binding.progressBar2.progress
             viewModel?.fetchMoviesAndTvShowsList(text.toString())
             observeData("movie")
         }
@@ -154,7 +155,7 @@ class SearchFragment @Inject constructor(
 
 
     fun openDetails(movieId: Long, mediaTyp: String) {
-        val bundlePostIdAndMediaTyp = bundleOf(ITEM_ID to movieId, MEDIATYP to mediaTyp)
+        val bundlePostIdAndMediaTyp = bundleOf(MOVIE_ID to movieId, MEDIATYP to mediaTyp)
         navigator.navigateWithBundle(R.id.navDirectionMoviesDetailsFragment, bundlePostIdAndMediaTyp)
     }
 

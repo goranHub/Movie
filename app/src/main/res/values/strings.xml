@@ -10,7 +10,7 @@
     <string name="w">ww</string>
     <string name="details">Details</string>
     <string name="crew">Crew</string>
-    <string name="topMovie">Top Movie</string>
+    <string name="top_movies">Top Movies</string>
     <string name="search">Search</string>
     <string name="click_back_again_to_exit">"click back again to exit"</string>
     <string name="sign_in">SIGN IN</string>
@@ -33,6 +33,7 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="update">UPDATE</string>
-    <string name="movies">movies</string>
+    <string name="movies">Movies</string>
     <string name="search_movie_and_tv_shows">     Search movie and TvShows…</string>
+    <string name="saved_all_user">Saved all user</string>
 </resources>

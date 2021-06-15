@@ -1,6 +1,5 @@
 package mycom.learnsicoapp.movieapp.ui.detail
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,39 +7,39 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.hsalf.smileyrating.SmileyRating
 import dagger.hilt.android.AndroidEntryPoint
+import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
-import mycom.learnsicoapp.movieapp.data.database.ItemIdWithRating
-import mycom.learnsicoapp.movieapp.data.database.UserRatingsCrossRef
+import mycom.learnsicoapp.movieapp.data.database.entities.MovieEntity
+import mycom.learnsicoapp.movieapp.data.database.entities.Rating
+import mycom.learnsicoapp.movieapp.data.database.relations.MovieAndRating
+import mycom.learnsicoapp.movieapp.data.database.relations.MovieRatingCrossRef
+import mycom.learnsicoapp.movieapp.data.database.relations.UserMovieCrossRef
 import mycom.learnsicoapp.movieapp.data.remote.firebase.FireStoreClass
 import mycom.learnsicoapp.movieapp.databinding.FragmentMovieDetailsBinding
-import mycom.learnsicoapp.movieapp.utils.ITEM_ID
 import mycom.learnsicoapp.movieapp.utils.MEDIATYP
+import mycom.learnsicoapp.movieapp.utils.MOVIE_ID
 
 
 @AndroidEntryPoint
-class DetailsMovieFragment : Fragment() {
+class DetailsMovieFragment(val fireStoreClass: FireStoreClass) : Fragment() {
 
     private lateinit var binding: FragmentMovieDetailsBinding
     var movieId = 0L
     var mediaTyp = ""
 
+    val currentUser = fireStoreClass.currentUserID()
+
     private val viewModel: DetailsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        arguments?.getLong(ITEM_ID, -1)?.let {
-            movieId = it
-        }
-        arguments?.getString(MEDIATYP, "")?.let {
-            mediaTyp = it
-        }
+        arguments?.getLong(MOVIE_ID, -1)?.let {movieId = it}
+        arguments?.getString(MEDIATYP, "")?.let {mediaTyp = it}
     }
 
     override fun onCreateView(
@@ -57,89 +56,78 @@ class DetailsMovieFragment : Fragment() {
         }
 
         binding.data = viewModel.bindDetails
-
         insertSmiley()
-
         getSmileyByMovieId()
+        deleteSmileyByMovieId()
 
-        binding.btnDeleteAll.setOnClickListener {
-            deleteSmileyByMovieId()
-        }
         return binding.root
     }
 
 
     private fun insertSmiley() {
         binding.smiley.setSmileySelectedListener {
-            viewModel.insertSmiley(movieId.toInt(), it.rating)
             lifecycleScope.launch {
-                val currentUserID = FireStoreClass().currentUserID()
-                val crossRef = UserRatingsCrossRef(currentUserID, movieId.toString())
-                viewModel.insertUserMovieRatingCrossRef(crossRef)
+                //for saved fragment by current user
+                val crossRef = UserMovieCrossRef(currentUser, movieId.toString())
+                viewModel.insertUserMovieCrossRef(crossRef)
+
+                val movieRatingCrossRef = MovieRatingCrossRef(movieId.toString(), it.rating.toString())
+                viewModel.insertMovieRatingCrossRef(movieRatingCrossRef)
+
+                val ratingEntity = Rating(it.rating.toString(), movieId.toString())
+                viewModel.insertRating(ratingEntity)
+
+                val movieEntity = MovieEntity("")
+                movieEntity.movieID =  movieId.toString()
+                viewModel.insertMovie(movieEntity)
+                //for saved all user fragment
             }
         }
     }
 
     private fun deleteSmileyByMovieId() {
-        viewModel.deleteSmileyByMovieId(movieId.toInt())
+        binding.btnDeleteAll.setOnClickListener {
+            viewModel.deleteSmileyByMovieId(movieId.toString(), currentUser)
+        }
     }
 
 
     private fun getSmileyByMovieId() {
         viewModel
-            .getSmileyByMovieId(movieId.toInt())
+            .getRating(movieId.toString())
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                object : Observer<ItemIdWithRating> {
+            .subscribe(object : Observer<List<MovieAndRating>> {
                     override fun onSubscribe(d: Disposable) {
                     }
-
-                    override fun onNext(response: ItemIdWithRating) {
-                        val rating = response.rating
-                        setFaceBackgroundColor(rating)
+                    override fun onNext(response: List<MovieAndRating>) {
+                        response.map {
+                            setFaceBackgroundColor(it.rating.rating.toInt())
+                        }
                     }
-
                     override fun onError(e: Throwable) {
                     }
-
                     override fun onComplete() {
                     }
-
-                }
-            )
+                })
     }
 
 
-    private fun setFaceBackgroundColor(
-        rating: Int?
-    ) {
-        lateinit var type: SmileyRating.Type
-        val color = Color.YELLOW
+    private fun setFaceBackgroundColor(rating: Int?) {
         if (rating == 1) {
-            type = SmileyRating.Type.TERRIBLE
             binding.smiley.setRating(rating, false)
-            binding.smiley.setFaceBackgroundColor(type, color)
         }
         if (rating == 2) {
-            type = SmileyRating.Type.BAD
             binding.smiley.setRating(rating, false)
-            binding.smiley.setFaceBackgroundColor(type, color)
         }
         if (rating == 3) {
-            type = SmileyRating.Type.OKAY
             binding.smiley.setRating(rating, false)
-            binding.smiley.setFaceBackgroundColor(type, color)
         }
         if (rating == 4) {
-            type = SmileyRating.Type.GOOD
             binding.smiley.setRating(rating, false)
-            binding.smiley.setFaceBackgroundColor(type, color)
         }
         if (rating == 5) {
-            type = SmileyRating.Type.GREAT
             binding.smiley.setRating(rating, false)
-            binding.smiley.setFaceBackgroundColor(type, color)
         }
     }
 

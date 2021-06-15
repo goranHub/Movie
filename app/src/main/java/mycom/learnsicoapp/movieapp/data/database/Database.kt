@@ -2,13 +2,14 @@ package mycom.learnsicoapp.movieapp.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import mycom.learnsicoapp.movieapp.data.database.entities.MovieEntity
+import mycom.learnsicoapp.movieapp.data.database.entities.Rating
+import mycom.learnsicoapp.movieapp.data.database.entities.User
+import mycom.learnsicoapp.movieapp.data.database.relations.MovieRatingCrossRef
+import mycom.learnsicoapp.movieapp.data.database.relations.UserMovieCrossRef
 
 
-/**
- * @author ll4
- * @date 12/15/2020
- */
-@Database(entities = [ItemIdWithRating::class, User::class, UserRatingsCrossRef::class], version = 1, exportSchema = false)
+@Database(entities = [User::class, UserMovieCrossRef::class, MovieRatingCrossRef::class, MovieEntity::class, Rating::class], version = 1 , exportSchema = false)
 abstract class Database : RoomDatabase() {
     abstract fun movieDao() : DatabaseDao
 }

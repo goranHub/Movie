@@ -1,6 +1,6 @@
 package mycom.learnsicoapp.movieapp.utils
 
-import mycom.learnsicoapp.movieapp.data.database.User
+import mycom.learnsicoapp.movieapp.data.database.entities.User
 import mycom.learnsicoapp.movieapp.data.remote.firebase.model.UserFirebase
 import mycom.learnsicoapp.movieapp.data.remote.response.user.UserModel
 
@@ -11,8 +11,6 @@ fun UserFirebase.mapToUserEntity() : User {
         name = this.name,
         email = this.email,
         image = this.image,
-        movieId = this.movieId,
-        movieRating = this.movieRating,
         fcmToken = this.fcmToken
     )
 }

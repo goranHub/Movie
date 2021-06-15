@@ -48,7 +48,6 @@ class TopMovieAdapter @Inject constructor(): RecyclerView.Adapter<TopMovieAdapte
 
     fun addMovies(listItems: List<BindMovie>) {
         list.addAll(listItems)
-        notifyDataSetChanged()
     }
 
     class TopViewHolder(val binding: ItemMovieTopBinding) :

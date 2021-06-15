@@ -1,12 +1,9 @@
 package mycom.learnsicoapp.movieapp
 
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
@@ -17,15 +14,14 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
-import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_entry.*
 import mycom.learnsicoapp.movieapp.databinding.ActivityEntryBinding
 import mycom.learnsicoapp.movieapp.di.Navigator
-import mycom.learnsicoapp.movieapp.ui.profil.MyProfileViewModel
 import mycom.learnsicoapp.movieapp.utils.MovieFragmentFactory
+import mycom.learnsicoapp.movieapp.utils.PREF_NAME
+import mycom.learnsicoapp.movieapp.utils.setDrawerHeaderImage
 import javax.inject.Inject
 
 
@@ -36,9 +32,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class EntryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private val myProfileViewModel by viewModels<MyProfileViewModel>()
-    lateinit var navController: NavController
-    lateinit var bottomNav: BottomNavigationView
+    private lateinit var navController: NavController
+    private lateinit var bottomNav: BottomNavigationView
     lateinit var binding: ActivityEntryBinding
     lateinit var drawerLayout: DrawerLayout
     lateinit var toolbar: Toolbar
@@ -49,6 +44,8 @@ class EntryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
     @Inject
     lateinit var navigator: Navigator
 
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
 
     private val appBarConfiguration by lazy {
         AppBarConfiguration(
@@ -57,6 +54,7 @@ class EntryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                 R.id.popularMovieFragment,
                 R.id.searchFragment,
                 R.id.savedFragment,
+                R.id.savedFragmentAll,
                 R.id.movieDetailsFragment
             ), drawerLayout
         )
@@ -66,36 +64,19 @@ class EntryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         super.onCreate(savedInstanceState)
 
         supportFragmentManager.fragmentFactory = fragmentFactory
-
-        binding = DataBindingUtil.setContentView(this,
-            R.layout.activity_entry
-        )
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_entry)
 
         bottomNav = binding.bottomNavigationView
-
         bottomNav.visibility = View.GONE
 
-        navController = findNavController(R.id.nav_host_fragment_entry)
-
-        navigator.navController = navController
+        navigator.navController = findNavController(R.id.nav_host_fragment_entry)
+        navController = navigator.navController
 
         toolbar = binding.toolbar
 
         setupBottomNavigation()
-
-        setupNav()
-
+        showBottomNavigation()
         setupNavigation()
-
-        //upload myProfil and drawer from DB
-        myProfileViewModel.userFromDB.observe(this, {
-            val image = it?.image
-            if (image != null) {
-                Log.e("simpleName", "2")
-                myProfileViewModel.bindMyProfile.image = image
-                setDrawerHeaderImage(image)
-            }
-        })
     }
 
     private fun setupNavigation() {
@@ -115,15 +96,15 @@ class EntryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             R.id.my_profile -> navController.navigate(R.id.myProfileFragment)
             R.id.movies -> navController.navigate(R.id.topMovieFragment)
             R.id.saved -> navController.navigate(R.id.savedFragment)
+            R.id.savedAllUser -> navController.navigate(R.id.savedFragmentAll)
             R.id.sign_out -> navController.navigate(R.id.introFragment)
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 
-    private fun setupNav() {
-        navController.addOnDestinationChangedListener {
-                _, destination, _ ->
+    private fun showBottomNavigation() {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.topMovieFragment -> showBottomNav()
                 R.id.popularMovieFragment -> showBottomNav()
@@ -133,20 +114,11 @@ class EntryActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         }
     }
 
-    private fun setDrawerHeaderImage(image: String?) {
-        //set into drawer header
-        val headerProfilImageView =
-            this.navigation_view.getHeaderView(0)
-                .findViewById(R.id.header_imageView) as ImageView
-
-        this.let { context ->
-            Glide
-                .with(context)
-                .load(image)
-                .centerCrop()
-                .placeholder(R.drawable.ic_baseline_local_movies_24)
-                .into(headerProfilImageView)
-        }
+    override fun onResume() {
+        super.onResume()
+        val selectedImageUri = sharedPreferences.getString(PREF_NAME, "")
+        setDrawerHeaderImage(selectedImageUri, this)
+        drawerLayout.showContextMenu()
     }
 
     override fun onSupportNavigateUp(): Boolean {

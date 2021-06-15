@@ -15,7 +15,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:background="@drawable/entry_light_blue_gradient"
+            android:background="@drawable/main_background_gradient"
             android:layout_height="match_parent">
 
             <androidx.appcompat.widget.Toolbar
@@ -59,7 +59,8 @@
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:fitsSystemWindows="true"
-            android:background="@drawable/drawer_gradient"
+            android:background="@drawable/side_nav_bar"
+            app:itemIconTint="@drawable/bottom_navigation_selector"
             app:headerLayout="@layout/drawer_header"
             app:menu="@menu/activity_main_drawer" />
 

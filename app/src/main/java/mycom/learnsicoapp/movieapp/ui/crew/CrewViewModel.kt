@@ -7,7 +7,7 @@ import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import mycom.learnsicoapp.movieapp.data.remote.response.movie.Movie
+import mycom.learnsicoapp.movieapp.data.remote.response.movie.MovieResponse
 import mycom.learnsicoapp.movieapp.domain.Repository
 
 class CrewViewModel @ViewModelInject constructor(
@@ -22,11 +22,11 @@ class CrewViewModel @ViewModelInject constructor(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                object : Observer<Movie> {
+                object : Observer<MovieResponse> {
                     override fun onSubscribe(d: Disposable) {
                     }
 
-                    override fun onNext(response: Movie) {
+                    override fun onNext(response: MovieResponse) {
                         val list = response.credits?.cast
                             ?.filter { !response.posterPath.isNullOrBlank() }
                             ?.distinctBy { it.profilePath }
