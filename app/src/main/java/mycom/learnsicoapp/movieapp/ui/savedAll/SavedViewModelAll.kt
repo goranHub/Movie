@@ -5,7 +5,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import mycom.learnsicoapp.movieapp.data.database.relations.MovieWithRatings
+import mycom.learnsicoapp.movieapp.data.database.relations.MovieAndRatings
 import mycom.learnsicoapp.movieapp.data.remote.firebase.FireStoreClass
 import mycom.learnsicoapp.movieapp.data.remote.response.movie.MovieResponse
 import mycom.learnsicoapp.movieapp.domain.Repository
@@ -20,8 +20,8 @@ class SavedViewModelAll @ViewModelInject constructor(
 ) : ViewModel() {
 
     val adapter = SavedAdapterAll()
-    var allElementMovieAPiResponse = mutableListOf<MovieResponse>()
-    var allElementMovieIdAndRatingDB = mutableListOf<MovieWithRatings>()
+    var movieResponse = mutableListOf<MovieResponse>()
+    var movieRatings = mutableListOf<MovieAndRatings>()
     val currentUser = fireStoreClass.currentUserID()
 
     init {
@@ -34,23 +34,22 @@ class SavedViewModelAll @ViewModelInject constructor(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { list ->
-                getMovieById(list)
+                getMovieByIdFromNetwork(list)
             }
     }
 
     @SuppressLint("CheckResult")
-    private fun getMovieById(movieWithRating: MovieWithRatings) {
-        repository.getMovieByIDFromNetwork(movieWithRating.movie.movieID.toLong())
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { movie ->
-                allElementMovieAPiResponse.add(movie)
-                allElementMovieIdAndRatingDB.add(movieWithRating)
-                adapter.addMovieWithRating(
-                    allElementMovieAPiResponse,
-                    allElementMovieIdAndRatingDB
-                )
-            }
+    private fun getMovieByIdFromNetwork(movieWithRating: List<MovieAndRatings>) {
+        movieWithRating.map {
+            repository.getMovieByIDFromNetwork(it.movie.movieID.toLong())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { movie ->
+                    movieResponse.add(movie)
+                    movieRatings.add(it)
+                    adapter.addMovieWithRating(movieResponse, movieRatings)
+                }
+        }
     }
 }
 

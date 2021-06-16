@@ -7,8 +7,6 @@ import androidx.room.PrimaryKey
 @Entity
 data class Rating (
     @PrimaryKey(autoGenerate = false)
-    @ColumnInfo(name = "rating")
-    var rating: String,
-    var movieID: String
-
+    @ColumnInfo(name = "ratingId")
+    var ratingId: String
 )

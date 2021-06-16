@@ -7,12 +7,12 @@ import mycom.learnsicoapp.movieapp.data.database.entities.MovieEntity
 import mycom.learnsicoapp.movieapp.data.database.entities.Rating
 
 
-data class MovieWithRatings(
+data class MovieAndRatings(
 
     @Embedded val movie: MovieEntity,
     @Relation(
         parentColumn = "movieID",
-        entityColumn = "rating",
+        entityColumn = "ratingId",
         associateBy = Junction(MovieRatingCrossRef::class)
     )
     val ratingList: List<Rating>

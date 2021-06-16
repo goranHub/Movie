@@ -62,14 +62,14 @@ class Repository(
         return databaseDataSource.getRatingsOfUser(currentUser)
     }
 
-    fun getRatingsOfMovie(): Observable<MovieWithRatings> {
+    fun getRatingsOfMovie(): Observable<List<MovieAndRatings>> {
         return databaseDataSource.getRatingsOfMovie()
     }
-    fun getMovieAndRatingWithMovieID(movieID: String): Observable<MovieWithRatings> {
+    fun getMovieAndRatingWithMovieID(movieID: String): Observable<MovieAndRatings> {
         return databaseDataSource.getMovieAndRatingWithMovieID(movieID)
     }
 
-    fun getRating(movieID: String): Observable<List<MovieAndRating>> {
+    fun getRating(movieID: String): Observable<MovieAndRating> {
         return databaseDataSource.getRating(movieID)
     }
 

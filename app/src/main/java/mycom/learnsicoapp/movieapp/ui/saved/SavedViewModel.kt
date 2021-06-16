@@ -25,7 +25,7 @@ class SavedViewModel @ViewModelInject constructor(
     val adapter = SavedAdapter()
     var allMovieAPiResponse =
         mutableListOf<mycom.learnsicoapp.movieapp.data.remote.response.movie.MovieResponse>()
-    var allRatingsDB = mutableListOf<Rating>()
+    var allRatingsDB = mutableListOf<Rating?>()
     val currentUser = fireStoreClass.currentUserID()
 
     init {
@@ -45,32 +45,20 @@ class SavedViewModel @ViewModelInject constructor(
     }
 
 
+    @SuppressLint("CheckResult")
     private fun getRatingByMovieD(movie: MovieEntity) {
         repository
             .getRating(movie.movieID)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : Observer<List<MovieAndRating>> {
-                override fun onSubscribe(d: Disposable) {
-                }
-
-                override fun onNext(response: List<MovieAndRating>) {
-                    response.map {
-                        getMovieById(movie, it.rating)
-                    }
-                }
-
-                override fun onError(e: Throwable) {
-                }
-
-                override fun onComplete() {
-                }
+            .subscribe {
+                val it = it
+                    getMovieById(movie, it.rating)
             }
-            )
     }
 
     @SuppressLint("CheckResult")
-    private fun getMovieById(movie: MovieEntity, rating: Rating) {
+    private fun getMovieById(movie: MovieEntity, rating: Rating?) {
         repository.getMovieByIDFromNetwork(movie.movieID.toLong())
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

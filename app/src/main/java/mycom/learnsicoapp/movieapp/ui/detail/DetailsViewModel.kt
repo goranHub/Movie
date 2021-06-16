@@ -1,5 +1,6 @@
 package mycom.learnsicoapp.movieapp.ui.detail
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
@@ -12,7 +13,7 @@ import mycom.learnsicoapp.movieapp.data.database.entities.MovieEntity
 import mycom.learnsicoapp.movieapp.data.database.entities.Rating
 import mycom.learnsicoapp.movieapp.data.database.relations.MovieAndRating
 import mycom.learnsicoapp.movieapp.data.database.relations.MovieRatingCrossRef
-import mycom.learnsicoapp.movieapp.data.database.relations.MovieWithRatings
+import mycom.learnsicoapp.movieapp.data.database.relations.MovieAndRatings
 import mycom.learnsicoapp.movieapp.data.database.relations.UserMovieCrossRef
 import mycom.learnsicoapp.movieapp.data.remote.response.tvShow.TvResponse
 import mycom.learnsicoapp.movieapp.domain.Repository
@@ -41,12 +42,12 @@ class DetailsViewModel @ViewModelInject constructor(
         repository.insertMovie(movie)
     }
 
-    fun getMovieAndRatingWithMovieID(movieID: String): Observable<MovieWithRatings> {
+    fun getMovieAndRatingWithMovieID(movieID: String): Observable<MovieAndRatings> {
         return repository.getMovieAndRatingWithMovieID(movieID)
     }
 
 
-    fun getRating(movieID: String): Observable<List<MovieAndRating>> {
+    fun getRating(movieID: String): Observable<MovieAndRating> {
         return repository.getRating(movieID)
     }
 
@@ -54,28 +55,18 @@ class DetailsViewModel @ViewModelInject constructor(
         repository.deleteSmileyByMovieId(movieID, userID)
     }
 
+    @SuppressLint("CheckResult")
     fun getMovieByID(movieId: Long) {
         repository
             .getMovieByIDFromNetwork(movieId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                object : Observer<mycom.learnsicoapp.movieapp.data.remote.response.movie.MovieResponse> {
-                    override fun onSubscribe(d: Disposable) {
-                    }
-                    override fun onNext(response: mycom.learnsicoapp.movieapp.data.remote.response.movie.MovieResponse) {
-                        bindDetails.imageUrl = URL_IMAGE + response.posterPath
-                        bindDetails.overview = response.overview
-                        bindDetails.popularity = response.popularity
-                        bindDetails.releaseDate = response.releaseDate
-                    }
-                    override fun onError(e: Throwable) {
-                        Log.d("error", "${e.stackTrace}")
-                    }
-                    override fun onComplete() {
-                    }
-                }
-            )
+            .subscribe {
+                bindDetails.imageUrl = URL_IMAGE + it.posterPath
+                bindDetails.overview = it.overview
+                bindDetails.popularity = it.popularity
+                bindDetails.releaseDate = it.releaseDate
+            }
     }
 
     fun getTvShowById(movieId: Long) {

@@ -16,27 +16,18 @@ interface DatabaseDao {
     @Query("SELECT * FROM User")
     fun getAuthUserDB(): Observable<List<User>>
 
-/*    @Query("SELECT * FROM MovieRatingEntity WHERE movieID =:movieID")
-    fun getMovieAndRatingWithMovieID(movieID: String): Observable<MovieRatingEntity>
-
-    @Query("DELETE FROM MovieRatingEntity  WHERE movieID =:movieID")
-    suspend fun deleteSmileyByMovieId(movieID: String)*/
 
     @Query("DELETE FROM UserMovieCrossRef  WHERE movieID =:movieID AND userId =:userId")
     suspend fun deleteSmileyByMovieIdFormUserMovieCrossRef(movieID: String, userId: String)
 
 
     @Transaction
-    @Query("SELECT * FROM MovieEntity")
-    fun getRatingsOfMovie(): Observable<MovieWithRatings>
+    @Query("SELECT * FROM MovieEntity WHERE movieID = :movieID")
+    fun getMovieAndRatingWithMovieID(movieID: String): Observable<MovieAndRatings>
 
     @Transaction
     @Query("SELECT * FROM MovieEntity WHERE movieID = :movieID")
-    fun getMovieAndRatingWithMovieID(movieID: String): Observable<MovieWithRatings>
-
-    @Transaction
-    @Query("SELECT * FROM MovieEntity WHERE movieID = :movieID")
-    fun getRating(movieID: String): Observable<List<MovieAndRating>>
+    fun getRating(movieID: String): Observable<MovieAndRating>
 
 
     @Query("DELETE FROM MovieEntity  WHERE movieID =:movieID")
@@ -53,11 +44,18 @@ interface DatabaseDao {
     suspend fun insertUserMovieCrossRef(crossRef: UserMovieCrossRef)
 
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertMovieRatingCrossRef(crossRef: MovieRatingCrossRef)
 
+    //saved ne vraca
     @Transaction
     @Query("SELECT * FROM User WHERE userId = :userId")
     fun getRatingsOfUser(userId: String): Observable<List<UsersWithMovies>>
+
+
+    //saved all vraca
+    @Transaction
+    @Query("SELECT * FROM MovieEntity")
+    fun getRatingsOfMovie(): Observable<List<MovieAndRatings>>
 
 }

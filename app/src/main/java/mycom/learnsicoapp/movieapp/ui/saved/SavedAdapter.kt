@@ -15,7 +15,7 @@ import mycom.learnsicoapp.movieapp.utils.URL_IMAGE
 
 class SavedAdapter : RecyclerView.Adapter<SavedAdapter.ViewHolderSaved>() {
 
-    var listRating = listOf<Rating>()
+    var listRating = listOf<Rating?>()
     var movieList = listOf<MovieResponse>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderSaved {
@@ -28,16 +28,17 @@ class SavedAdapter : RecyclerView.Adapter<SavedAdapter.ViewHolderSaved>() {
 
 
     override fun onBindViewHolder(holder: ViewHolderSaved, position: Int) {
-        holder.contentView.text = listRating[position].rating
 
+        holder.contentView.text = listRating[position]?.ratingId
         val dataMovie = movieList[position]
         Glide.with(holder.idView.rootView.context)
             .load(URL_IMAGE + dataMovie.posterPath)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(holder.idView)
+
     }
 
-    fun addMovieWithRating(allElement: List<MovieResponse>, list: List<Rating>) {
+    fun addMovieWithRating(allElement: List<MovieResponse>, list: List<Rating?>) {
         movieList = allElement
         listRating = list
         notifyDataSetChanged()

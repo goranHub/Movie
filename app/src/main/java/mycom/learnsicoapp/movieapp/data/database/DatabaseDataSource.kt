@@ -19,7 +19,7 @@ class DatabaseDataSource @Inject constructor(
         return dao.getRatingsOfUser(currentUser)
     }
 
-    fun getRatingsOfMovie(): Observable<MovieWithRatings> {
+    fun getRatingsOfMovie(): Observable<List<MovieAndRatings>> {
         return dao.getRatingsOfMovie()
     }
 
@@ -53,11 +53,11 @@ class DatabaseDataSource @Inject constructor(
         return dao.getAuthUserDB()
     }
 
-    fun getMovieAndRatingWithMovieID(movieID: String): Observable<MovieWithRatings> {
+    fun getMovieAndRatingWithMovieID(movieID: String): Observable<MovieAndRatings> {
         return dao.getMovieAndRatingWithMovieID(movieID)
     }
 
-    fun getRating(movieID: String): Observable<List<MovieAndRating>>{
+    fun getRating(movieID: String): Observable<MovieAndRating> {
         return dao.getRating(movieID)
     }
 
